@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+#define ll long long
+#define sz(x) (int)(x).size()
+using namespace std;
+
+double f (double t)
+{
+    return sqrt (fabs (t)) + 5 * pow (t, 3);
+}
+
+int main (void)
+{
+    double a[11], y;
+    int i;
+
+    for (i = 0; i < 11; i++)
+        scanf ("%lf", &a[i]);
+
+    for (i = 10; i >= 0; i--) {
+        y = f (a[i]);
+        if (y > 400)
+            printf ("%d TOO LARGE\n", i);
+        else
+            printf ("%d %f\n", i, y);
+    }
+
+    return 0;
+}
