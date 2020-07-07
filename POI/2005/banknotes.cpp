@@ -3,30 +3,44 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-int dp[201][20001];
-
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,k,INF=1e9,cur;
+    int n,k,INF=1e9,cur,curSum;
     cin>>n;
-    int b[n+1];
-    int c[n+1];
+    int ans[n+1],b[n+1],c[n+1];
     for (int i=1;i<=n;++i)
         cin>>b[i];
     for (int i=1;i<=n;++i)
         cin>>c[i];
     cin>>k;
-    for (int i=0;i<201;++i)
-        for (int j=0;j<20001;++j)
-            dp[i][j]=INF;
+    int dp[n+1][k+1];
+    for (int i=0;i<=k;++i)
+        dp[0][i]=INF;
     dp[0][0]=0;
     for (int i=1;i<=n;++i)
+    {
         for (int j=0;j<=k;++j)
-            for (int l=0;l<=c[i]&&l*b[i]<=j;++l)
-                dp[i][j]=min(dp[i][j],dp[i-1][j-l*b[i]]+l);
+        {
+            if (dp[i-1][j]<INF)
+                dp[i][j]=dp[i-1][j];
+            else
+                dp[i][j]=INF;
+        }
+        curSum=0;
+        for (int j=1;curSum+j<=c[i];j<<=1)
+        {
+            for (int ij=k;ij>=j*b[i];--ij)
+                if (dp[i][ij-j*b[i]]<INF)
+                    dp[i][ij]=dp[i][ij-j*b[i]]+j;
+            curSum+=j;
+        }
+        cur=c[i]-curSum;
+        for (int ij=k;ij>=cur*b[i];--ij)
+            if (dp[i][ij-cur*b[i]]<INF)
+                dp[i][ij]=dp[i][ij-cur*b[i]]+cur;
+    }
     cout<<dp[n][k]<<"\n";
-    int ans[n+1];
     cur=k;
     for (int i=n;i;--i)
         for (int j=0;j<20001;++j)
