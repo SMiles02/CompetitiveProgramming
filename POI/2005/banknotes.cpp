@@ -32,13 +32,13 @@ int main()
         {
             for (int ij=k;ij>=j*b[i];--ij)
                 if (dp[i][ij-j*b[i]]<INF)
-                    dp[i][ij]=dp[i][ij-j*b[i]]+j;
+                    dp[i][ij]=min(dp[i][ij-j*b[i]]+j,dp[i][ij]);
             curSum+=j;
         }
         cur=c[i]-curSum;
         for (int ij=k;ij>=cur*b[i];--ij)
             if (dp[i][ij-cur*b[i]]<INF)
-                dp[i][ij]=dp[i][ij-cur*b[i]]+cur;
+                dp[i][ij]=min(dp[i][ij-cur*b[i]]+cur,dp[i][ij]);
     }
     cout<<dp[n][k]<<"\n";
     cur=k;
