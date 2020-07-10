@@ -41,13 +41,13 @@ void addWord()
 
 void ansBuilder(int cur)
 {
+    if (isEnd[cur])
+        ans+='P';
     for (auto i : children[cur])
     {
         ans+=alpha[i.second];
         ansBuilder(nextL[cur][i.second]);
     }
-    if (isEnd[cur])
-        ans+='P';
     if (cur)
         ans+="-";
 }
