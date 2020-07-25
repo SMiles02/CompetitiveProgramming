@@ -2,54 +2,48 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
-
-ll binpow(ll a, ll b)
-{
-    if (b == 0)
-        return 1;
-    ll res = binpow(a, b / 2);
-    res*=res;
-    if (b % 2)
-        return res * a;
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    string s="0",t;
-    bool inc=0,incSame=0;
-    int n;
-    cin>>t;
-    s+=t;
-    n=sz(s);
-    for (int i=n-1;i;++i)
+    int n,t,ans=0,cur;
+    cin>>n>>t;
+    int a[n*t];
+    for (int i=0;i<n;++i)
+        cin>>a[i];
+    for (int i=n;i<n*t;++i)
+        a[i]=a[i-n];
+    int dp[n*t];
+    for (int i=0;i<n*t;++i)
     {
-        if ((s[i]-'0')>7)
+        dp[i]=1;
+        for (int j=0;j<i;++j)
+            if (a[j]<=a[i])
+                dp[i]=max(dp[i],dp[j]+1);
+        ans=max(ans,dp[i]);
+    }
+    cout<<ans<<"\n";
+    for (int i=n-1;i+1;--i)
+    {
+        if (dp[i]==ans)
         {
-            s[i]='4';
-            for (int j=i+1;j<n;++j)
-                s[j]='4';
+            stack<int> s;
+            cur=i;
+            s.push(i);
+            while (dp[cur]>1)
+                for (int j=cur-1;j+1;--j)
+                    if (a[j]<=a[cur]&&dp[j]==dp[cur]-1)
+                    {
+                        cur=i;
+                        s.push(i);
+                        break;
+                    }
+            while (sz(s))
+            {
+                cout<<a[s.top()]<<" ";
+                s.pop();
+            }
+            break;
         }
     }
     return 0;

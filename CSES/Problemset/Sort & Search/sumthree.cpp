@@ -8,50 +8,26 @@ int main()
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n,x;
     cin>>n>>x;
-    map<int,int> m;
+    multiset<int> s;
     int a[n];
     for (int i=0;i<n;++i)
     {
         cin>>a[i];
-        ++m[a[i]];
+        s.insert(a[i]);
     }
-    for (int i=0;i<n;++i)
-        for (int j=i+1;j<n;++j)
+    for (int i=0;i+1<n;++i)
+    {
+        s.erase(s.lower_bound(a[i]));
+        for (int j=0;j<i;++j)
             if (a[i]+a[j]<x)
-            {
-                if (a[i]==x-a[i]-a[j]&&a[i]==a[j])
-                {
-                    if (m[a[i]]>2)
-                    {
-                        cout<<a[i]<<" "<<a[i]<<" "<<a[i]<<"\n";
-                        return 0;
-                    }
-                }
-                else if (a[i]==x-a[i]-a[j])
-                {
-                    if (m[a[i]]>1)
-                    {
-                        cout<<a[i]<<" "<<a[i]<<" "<<a[j]<<"\n";
-                        return 0;
-                    }
-                }
-                else if (a[j]==x-a[i]-a[j])
-                {
-                    if (m[a[j]]>1)
-                    {
-                        cout<<a[i]<<" "<<a[j]<<" "<<a[j]<<"\n";
-                        return 0;
-                    }
-                }
-                else
-                {
-                    if (m[x-a[i]-a[j]])
-                    {
-                        cout<<a[i]<<" "<<a[j]<<" "<<x-a[i]-a[j]<<"\n";
-                        return 0;
-                    }
-                }
-            }
+                if (s.find(x-a[i]-a[j])!=s.end())
+                    for (int k=i+1;k<n;++k)
+                        if (a[k]==x-a[i]-a[j])
+                        {
+                            cout<<j+1<<" "<<i+1<<" "<<k+1<<"\n";
+                            return 0;
+                        }
+    }
     cout<<"IMPOSSIBLE";
     return 0;
 }
