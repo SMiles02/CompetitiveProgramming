@@ -34,10 +34,32 @@ string to_lower(string a)
     return a;
 }
 
+void solve()
+{
+    int n,k;
+    cin>>n;
+    vector<int> v;
+    set<int> s;
+    for (int i=0;i<2*n;++i)
+    {
+        cin>>k;
+        if (s.find(k)==s.end())
+        {
+            v.push_back(k);
+            s.insert(k);
+        }
+    }
+    for (int i : v)
+        cout<<i<<" ";
+    cout<<"\n";
+}
+
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
     cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

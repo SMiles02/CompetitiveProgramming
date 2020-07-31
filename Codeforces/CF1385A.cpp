@@ -34,10 +34,26 @@ string to_lower(string a)
     return a;
 }
 
+void solve()
+{
+    int x,y,z;
+    cin>>x>>y>>z;
+    vector<vector<int>> v={{x,y,z},{x,z,y},{y,x,z},{y,z,x},{z,y,x},{z,x,y}};
+    for (auto i : v)
+        if (i[0]==i[1]&&i[0]>=i[2])
+        {
+            cout<<"YES\n"<<i[0]<<" "<<i[2]<<" "<<i[2]<<"\n";
+            return;
+        }
+    cout<<"NO\n";
+}
+
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
     cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

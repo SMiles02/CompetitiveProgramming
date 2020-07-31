@@ -1,16 +1,15 @@
-5
-3
-aab
-bcc
-4
-cabc
-abcb
-3
-abc
-tsr
-4
-aabd
-cccd
-5
-abcbd
-bcdda
+2
+4 6
+1 2
+1 3
+2 3
+2 4
+3 4
+3 4
+7 6
+1 2
+1 3
+2 4
+2 5
+3 6
+3 7
