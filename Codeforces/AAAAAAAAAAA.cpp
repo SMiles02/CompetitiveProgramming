@@ -3,47 +3,56 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-int big(int n)
+string ans;
+
+void addZ(string s)
 {
-    vector<int> v;
-    while (n)
-    {
-        v.push_back(n%10);
-        n/=10;
-    }
-    sort(v.begin(), v.end());
-    int cur=0;
-    for (int i : v)
-    {
-        cur*=10;
-        cur+=i;
-    }
-    return cur;
+    for (int i=0;i<4-sz(s);++i)
+        ans+='0';
+    ans+=s;
+    ans+=":";
 }
 
-int small(int n)
+void solve()
 {
-    vector<int> v;
-    while (n)
+    string s,cur="";int spec=39;
+    ans.clear();
+    cin>>s;
+    for (int i=0;i<sz(s);++i)
     {
-        v.push_back(n%10);
-        n/=10;
+        if (s[i]==':')
+        {
+            if (0<=i-1&&s[i-1]==':')
+            {
+                spec=sz(ans);
+            }
+            else
+            {
+                addZ(cur);
+            }
+            cur.clear();
+        }
+        else
+            cur+=s[i];
     }
-    sort(v.rbegin(), v.rend());
-    int cur=0;
-    for (int i : v)
-    {
-        cur*=10;
-        cur+=i;
-    }
-    return cur;
+    addZ(cur);
+    ans.pop_back();
+    //cout<<sz(ans)<<"\n";
+    for (int i=0;i<spec;++i)
+        cout<<ans[i];
+    for (int i=0;i<39-sz(ans);i+=5)
+        cout<<"0000:";
+    for (int i=spec;i<sz(ans);++i)
+        cout<<ans[i];
+    cout<<"\n";
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    for (int i=0;i<=100000;++i)
-        if (big(i)-small(i)==i)
-            cout<<i<<"\n";
+    int n;
+    cin>>n;
+    while (n--)
+        solve();
     return 0;
 }
