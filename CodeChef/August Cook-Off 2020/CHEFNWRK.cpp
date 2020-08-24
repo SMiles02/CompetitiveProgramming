@@ -34,35 +34,36 @@ string to_lower(string a)
     return a;
 }
 
+void solve()
+{
+    int n,k,ans=1,c=0;
+    cin>>n>>k;
+    int a[n];
+    for (int i=0;i<n;++i)
+        cin>>a[i];
+    for (int i=0;i<n;++i)
+    {
+        if (a[i]>k)
+        {
+            cout<<"-1\n";
+            return;
+        }
+        if (c+a[i]>k)
+        {
+            c=0;
+            ++ans;
+        }
+        c+=a[i];
+    }
+    cout<<ans<<"\n";
+}
+
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    ll n,k,A,B,ans=0;
+    int n;
     cin>>n;
-    cin>>k;
-    cin>>A;
-    cin>>B;
-    //cout<<"0\n";return 0;
-    while (n>1)
-    {
-        //cout<<n<<" "<<ans<<"\n";
-        if (n<k||k==1)
-        {
-            cout<<ans+(n-1)*A;
-            return 0;
-        }
-        if (n%k)
-        {
-            ans+=((n%k)*A);
-            n-=(n%k);
-            continue;
-        }
-        if (B>(n-(n/k))*A)
-            ans+=(n-(n/k))*A;
-        else
-            ans+=B;
-        n/=k;
-    }
-    cout<<ans;
+    while (n--)
+        solve();
     return 0;
 }

@@ -34,35 +34,53 @@ string to_lower(string a)
     return a;
 }
 
+void solve()
+{
+    int n,k,z=0,o=0,x;
+    string s;
+    cin>>n>>k;
+    cin>>s;
+    for (auto c : s)
+    {
+        if (c=='0')
+            ++z;
+        else
+            ++o;
+    }
+    if (o%(n/k)||z%(n/k))
+    {
+        cout<<"IMPOSSIBLE\n";
+        return;
+    }
+    int ans[n];
+    for (int i=0;i<k;++i)
+    {
+        if (z)
+        {
+            x=0;
+            z-=(n/k);
+        }
+        else
+        {
+            x=1;
+            o-=(n/k);
+        }
+        for (int j=i;j<n;j+=2*k)
+            ans[j]=x;
+        for (int j=2*k-i-1;j<n;j+=2*k)
+            ans[j]=x;
+    }
+    for (int i=0;i<n;++i)
+        cout<<ans[i];
+    cout<<"\n";
+}
+
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    ll n,k,A,B,ans=0;
+    int n;
     cin>>n;
-    cin>>k;
-    cin>>A;
-    cin>>B;
-    //cout<<"0\n";return 0;
-    while (n>1)
-    {
-        //cout<<n<<" "<<ans<<"\n";
-        if (n<k||k==1)
-        {
-            cout<<ans+(n-1)*A;
-            return 0;
-        }
-        if (n%k)
-        {
-            ans+=((n%k)*A);
-            n-=(n%k);
-            continue;
-        }
-        if (B>(n-(n/k))*A)
-            ans+=(n-(n/k))*A;
-        else
-            ans+=B;
-        n/=k;
-    }
-    cout<<ans;
+    while (n--)
+        solve();
     return 0;
 }

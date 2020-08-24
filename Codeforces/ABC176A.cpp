@@ -37,32 +37,21 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    ll n,k,A,B,ans=0;
-    cin>>n;
-    cin>>k;
-    cin>>A;
-    cin>>B;
-    //cout<<"0\n";return 0;
-    while (n>1)
+    int h,w,m,ans=0;
+    cin>>h>>w>>m;
+    map<int,int> row;
+    map<int,int> col;
+    map<pair<int,int>,int> bombs;
+    pair<int,int> v[m];
+    for (int i=0;i<m;++i)
     {
-        //cout<<n<<" "<<ans<<"\n";
-        if (n<k||k==1)
-        {
-            cout<<ans+(n-1)*A;
-            return 0;
-        }
-        if (n%k)
-        {
-            ans+=((n%k)*A);
-            n-=(n%k);
-            continue;
-        }
-        if (B>(n-(n/k))*A)
-            ans+=(n-(n/k))*A;
-        else
-            ans+=B;
-        n/=k;
+        cin>>v[i].first>>v[i].second;
+        ++row[v[i].first];
+        ++col[v[i].second];
+        ++bombs[{v[i].first,v[i].second}];
     }
+    for (int i=0;i<m;++i)
+        ans=max(ans,row[v[i].first]+col[v[i].second]-bombs[{v[i].first,v[i].second}]);
     cout<<ans;
     return 0;
 }

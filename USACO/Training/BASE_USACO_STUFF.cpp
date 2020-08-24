@@ -45,7 +45,7 @@ int main()
 	freopen("test.in", "r", stdin);
     freopen("test.out", "w", stdout);
     int a, b;
-    fin >> a >> b;
-    fout << a+b << endl;
+    cin >> a >> b;
+    cout << a+b << endl;
 	return 0;
 }
