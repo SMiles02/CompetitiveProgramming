@@ -79,7 +79,7 @@ void queryMin(int i, int cL, int cR, int l, int r)
         return;
     if (l<=cL&&cR<=r)
     {
-        ans=min(ans,minTree[i].first+minTree[i].second);
+        ans=min(ans,calcMin(i));
         return;
     }
     passDown(i);
@@ -96,7 +96,7 @@ void querySum(int i, int cL, int cR, int l, int r)
         return;
     if (l<=cL&&cR<=r)
     {
-        ans+=sumTree[i]+minTree[i].second*lenOf[i];
+        ans+=calcSum(i);
         return;
     }
     passDown(i);

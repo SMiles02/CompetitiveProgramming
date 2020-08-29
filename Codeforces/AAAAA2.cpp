@@ -1,63 +1,83 @@
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
+#define pii pair<int,int>
+#define f first
+#define s second
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
+const int MAXN=500, INF=1e9;
+int r[MAXN],curRank[MAXN],peakRating[MAXN],peakRanking[MAXN],monthRating[MAXN],monthRanking[MAXN];
+
+void update(int i, int rating, int ranking, int month)
 {
-    if (b == 0)
-        return 1;
-    ll res = binpow(a, b / 2);
-    res*=res;
-    if (b % 2)
-        return res * a;
-    return res;
+    if (rating>peakRating[i])
+    {
+        peakRating[i]=rating;
+        monthRating[i]=month;
+    }
+    if (ranking<peakRanking[i])
+    {
+        peakRanking[i]=ranking;
+        monthRanking[i]=month;
+    }
 }
 
-ll gcd(ll a,ll b)
+void solve()
 {
-    if (b==0) return a;
-    return gcd(b,a%b);
+    int n,m;
+    cin>>n>>m;
+    for (int i=0;i<n;++i)
+    {
+        cin>>r[i];
+        peakRanking[i]=INF;
+        peakRating[i]=-INF;
+    }
+    int k;
+    vector<pii> v[m];
+    for (int i=0;i<n;++i)
+    {
+        for (int j=0;j<m;++j)
+        {
+            cin>>k;
+            r[i]+=k;
+            v[j].push_back({r[i],i});
+        }
+    }
+    for (int i=0;i<m;++i)
+    {
+        sort(v[i].rbegin(), v[i].rend());
+        curRank[0]=0;
+        update(v[i][0].s,v[i][0].f,curRank[0],i);
+        //cout<<v[i][0].f<<" ";
+        for (int j=1;j<n;++j)
+        {
+            //cout<<v[i][j].f<<" ";
+            if (v[i][j].f==v[i][j-1].f)
+                curRank[j]=curRank[j-1];
+            else
+                curRank[j]=j;
+            update(v[i][j].s,v[i][j].f,curRank[j],i);
+        }
+        //cout<<"\n";
+    }
+    int ans=0;
+    for (int i=0;i<n;++i)
+    {
+        //cout<<peakRanking[i]<<" "<<peakRating[i]<<"\n";
+        //cout<<monthRanking[i]<<" "<<monthRating[i]<<"\n\n";
+        if (monthRanking[i]!=monthRating[i])
+            ++ans;
+    }
+    cout<<ans<<"\n";
 }
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
-
-vector<int> rows[1000];
-vector<int> cols[1000];
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,m;
-    cin>>n>>m;
-    int a[n][m];
-    map<int,int> d;
-    for (int i=0;i<n;++i)
-        for (int j=0;j<m;++j)
-            cin>>a[i][j];
-    for (int i=0;i<n;++i)
-    {
-        m.clear();
-        for (int j=0;j<m;++j)
-            if (!d[a[i][j]])
-            {
-                rows[i].push_back(a[i][j]);
-                d[a[i][j]]=1;
-            }
-        sort(rows[i].begin(), rows[i].end());
-    }
-    
+    int n;
+    cin>>n;
+    while (n--)
+        solve();
     return 0;
 }
