@@ -2,9 +2,8 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-
-const int MAXN=1e5+11, mod=1e9+7;
-int c[MAXN];
+//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+//uniform_int_distribution<int>(1000,10000)(rng)
 
 ll binpow(ll a, ll b)
 {
@@ -12,48 +11,42 @@ ll binpow(ll a, ll b)
         return 1;
     ll res = binpow(a, b / 2);
     res*=res;
-    res%=mod;
     if (b % 2)
-        return (res * a)%mod;;
+        return res * a;
     return res;
 }
 
-void solve()
+ll gcd(ll a,ll b)
 {
-    int n,m,maxi=0,k;
-    cin>>n>>m;
-    ll ans=1;
-    set<int> s;
-    for (int i=1;i<n;++i)
-        c[i]=0;
-    for (int i=2;i<=n;++i)
-    {
-        cin>>k;
-        s.insert(k);
-        maxi=max(maxi,k);
-        ++c[k];
-    }
-    if (n-1!=m)
-        return;
-    if (sz(s)!=maxi)
-    {
-        cout<<"0\n";
-        return;
-    }
-    for (int i=2;i<=maxi;++i)
-    {
-        ans*=binpow(c[i-1],c[i]);
-        ans%=mod;
-    }
-    cout<<ans<<"\n";
+    if (b==0) return a;
+    return gcd(b,a%b);
+}
+
+string to_upper(string a)
+{
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
+    return a;
+}
+ 
+string to_lower(string a)
+{
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
+    return a;
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    while (n--)
-        solve();
+    /**cout<<200000-8<<endl;
+    for (char c = 'a';c<='z';++c)
+        for (int i=0;i<7692;++i)
+            cout<<c;
+    cout<<endl;**/
+    /**int n=2e5;
+    string s(n,'q');
+    cout<<n<<endl<<s<<endl;**/
+    cout<<1000<<endl;
+    for (int i=0;i<1000;++i)
+        cout<<1<<endl;
     return 0;
 }

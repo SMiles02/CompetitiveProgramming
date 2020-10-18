@@ -2,42 +2,70 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
+int fenwick[200001],x,med;
+
+void update(int i, int delta)
 {
-    if (b == 0)
-        return 1;
-    ll res = binpow(a, b / 2);
-    res*=res;
-    if (b % 2)
-        return res * a;
-    return res;
+    while (i<=x)
+    {
+        fenwick[i]+=delta;
+        i+=(i&-i);
+    }
 }
 
-ll gcd(ll a,ll b)
+int prefix(int i)
 {
-    if (b==0) return a;
-    return gcd(b,a%b);
+    int s=0;
+    while (i)
+    {
+        s+=fenwick[i];
+        i-=(i&-i);
+    }
+    return s;
 }
 
-string to_upper(string a)
+int binsearch()
 {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
+    int l=1,r=x,m;
+    while (l<r)
+    {
+        m=l+((r-l)>>1);
+        if (prefix(m)<med)
+            l=m+1;
+        else
+            r=m;
+    }
+    return l;
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,k;
+    cin>>n>>k;
+    int a[n],b[n+1];
+    map<int,int> pos;
+    set<int> s;
+    for (int i=0;i<n;++i)
+    {
+        cin>>a[i];
+        s.insert(a[i]);
+    }
+    for (int i : s)
+    {
+        b[++x]=i;
+        pos[i]=x;
+    }
+    med=(k+1)/2;
+    for (int i=0;i<k;++i)
+        update(pos[a[i]],1);
+    cout<<b[binsearch()]<<" ";
+    for (int i=k;i<n;++i)
+    {
+        update(pos[a[i-k]],-1);
+        update(pos[a[i]],1);
+        cout<<b[binsearch()]<<" ";
+    }
     return 0;
 }

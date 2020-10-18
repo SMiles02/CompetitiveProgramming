@@ -39,8 +39,7 @@ void treeCase()
         cout<<ans[i]*2<<"\n";
 } 
  
-vector<int> circle;
-vector<int> vals;
+vector<int> circle,vals;
  
 void dfs(int c, int p)
 {

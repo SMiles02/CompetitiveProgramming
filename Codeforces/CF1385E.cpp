@@ -1,106 +1,78 @@
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
+#define pii pair<int,int>
+#define f first
+#define s second
 using namespace std;
 
-vector<int> to[200001];
-vector<int> from[200001];
-set<int> undecided[200001];
-set<int> s;
-set<int> s2;
-bool ok=0;
-
-void dfs(int cur)
-{
-    if (s.find(cur)!=s.end())
-        return;
-    s.insert(cur);
-    int y;
-    while (sz(undecided[cur]))
-    {
-        y=*undecided[cur].begin();
-        undecided[cur].erase(y);
-        undecided[y].erase(cur);
-        to[cur].push_back(y);
-        from[y].push_back(cur);
-    }
-    for (int i : to[cur])
-        dfs(i);
-}
-
-void dfsTree(int cur)
-{
-    if (s2.find(cur)!=s2.end())
-    {
-        ok=1;
-        return;
-    }
-    if (s.find(cur)!=s.end())
-        return;
-    s.insert(cur);
-    s2.insert(cur);
-    for (int i : from[cur])
-        dfsTree(i);
-}
+const int MAXN = 2e5+7;
+int pos[MAXN],incoming[MAXN];
+vector<int> outgoing[MAXN];
 
 void solve()
 {
-    s.clear();
     int n,m,t,x,y;
     cin>>n>>m;
+    vector<pii> toDo;
     for (int i=1;i<=n;++i)
     {
-        to[i].clear();
-        from[i].clear();
+        outgoing[i].clear();
+        incoming[i]=0;
     }
     for (int i=0;i<m;++i)
     {
         cin>>t>>x>>y;
         if (t)
         {
-            from[x].push_back(y);
-            to[y].push_back(x);
+            ++incoming[y];
+            outgoing[x].push_back(y);
         }
         else
-        {
-            undecided[x].insert(y);
-            undecided[y].insert(x);
-        }
+            toDo.push_back({x,y});
     }
+    y=0;t=0;
+    stack<int> st;
     for (int i=1;i<=n;++i)
-        if (!sz(to[i]))
-        {
-            dfsTree(i);
-            s2.clear();
-        }
-    if (ok||sz(s)<n)
+        if (!incoming[i])
+            st.push(i);
+    while (sz(st))
     {
-        cout<<"NO\n";
-        //cout<<ok<<" "<<sz(s)<<" "<<n<<"\n";
-        return;
+        x=st.top();
+        st.pop();
+        ++y;
+        pos[x]=++t;
+        for (int i : outgoing[x])
+        {
+            --incoming[i];
+            if (!incoming[i])
+                st.push(i);
+        }
     }
-    s.clear();
-    for (int i=1;i<=n;++i)
-        if (!sz(from[i]))
-            dfs(i);
-    if (sz(s)<n)
+    if (y!=n)
     {
         cout<<"NO\n";
         return;
     }
     cout<<"YES\n";
     for (int i=1;i<=n;++i)
-        for (int j : from[i])
+        for (int j : outgoing[i])
             cout<<i<<" "<<j<<"\n";
-    return;
+    for (pii i : toDo)
+    {
+        if (pos[i.f]<pos[i.s])
+            cout<<i.f<<" "<<i.s<<"\n";
+        else
+            cout<<i.s<<" "<<i.f<<"\n";
+    }
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    while (n--)
+    int tests;
+    cin>>tests;
+    while (tests--)
         solve();
     return 0;
 }

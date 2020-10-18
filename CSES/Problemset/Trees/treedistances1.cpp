@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+ 
 const int MAXN=2e5+1;
 int d[MAXN][3],x,y=-1;
 vector<int> edges[MAXN];
-
+ 
 void dfs(int c, int p, int h, int k)
 {
     d[c][k]=h;
@@ -17,7 +17,7 @@ void dfs(int c, int p, int h, int k)
         if (i!=p)
             dfs(i,c,h+1,k);
 }
-
+ 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);

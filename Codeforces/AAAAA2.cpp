@@ -1,83 +1,67 @@
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
-#define pii pair<int,int>
-#define f first
-#define s second
 using namespace std;
 
-const int MAXN=500, INF=1e9;
-int r[MAXN],curRank[MAXN],peakRating[MAXN],peakRanking[MAXN],monthRating[MAXN],monthRanking[MAXN];
+const int maxn=1e5+7,mod=1e9+7;
+vector<int> edges[maxn];
 
-void update(int i, int rating, int ranking, int month)
+ll binpow(ll a, ll b)
 {
-    if (rating>peakRating[i])
-    {
-        peakRating[i]=rating;
-        monthRating[i]=month;
-    }
-    if (ranking<peakRanking[i])
-    {
-        peakRanking[i]=ranking;
-        monthRanking[i]=month;
-    }
+    if (b == 0)
+        return 1;
+    ll res = binpow(a, b / 2);
+    res*=res;
+    res%=mod;
+    if (b % 2)
+        return (res * a)%mod;
+    return res;
 }
 
-void solve()
+ll add(ll a, ll b)
 {
-    int n,m;
-    cin>>n>>m;
-    for (int i=0;i<n;++i)
-    {
-        cin>>r[i];
-        peakRanking[i]=INF;
-        peakRating[i]=-INF;
-    }
-    int k;
-    vector<pii> v[m];
-    for (int i=0;i<n;++i)
-    {
-        for (int j=0;j<m;++j)
-        {
-            cin>>k;
-            r[i]+=k;
-            v[j].push_back({r[i],i});
-        }
-    }
-    for (int i=0;i<m;++i)
-    {
-        sort(v[i].rbegin(), v[i].rend());
-        curRank[0]=0;
-        update(v[i][0].s,v[i][0].f,curRank[0],i);
-        //cout<<v[i][0].f<<" ";
-        for (int j=1;j<n;++j)
-        {
-            //cout<<v[i][j].f<<" ";
-            if (v[i][j].f==v[i][j-1].f)
-                curRank[j]=curRank[j-1];
-            else
-                curRank[j]=j;
-            update(v[i][j].s,v[i][j].f,curRank[j],i);
-        }
-        //cout<<"\n";
-    }
-    int ans=0;
-    for (int i=0;i<n;++i)
-    {
-        //cout<<peakRanking[i]<<" "<<peakRating[i]<<"\n";
-        //cout<<monthRanking[i]<<" "<<monthRating[i]<<"\n\n";
-        if (monthRanking[i]!=monthRating[i])
-            ++ans;
-    }
-    cout<<ans<<"\n";
+    return (a+b)%mod;
+}
+
+ll sub(ll a, ll b)
+{
+    return (((a-b)%mod)+mod)%mod;
+}
+
+int ct;
+bitset<maxn> done;
+
+void dfs(int c)
+{
+    done[c]=1;
+    ++ct;
+    for (int i : edges[c])
+        if (!done[i])
+            dfs(i);
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    while (n--)
-        solve();
+    int n,k,x,y,z;
+    cin>>n>>k;
+    ll ans=binpow(n,k);
+    for (int i=1;i<n;++i)
+    {
+        cin>>x>>y>>z;
+        if (!z)
+        {
+            edges[x].push_back(y);
+            edges[y].push_back(x);
+        }
+    }
+    for (int i=1;i<=n;++i)
+        if (!done[i])
+        {
+            ct=0;
+            dfs(i);
+            ans=sub(ans,binpow(ct,k));
+        }
+    cout<<ans;
     return 0;
 }
