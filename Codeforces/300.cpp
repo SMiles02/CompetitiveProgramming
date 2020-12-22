@@ -2,32 +2,52 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
+//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll min(ll a, ll b)
+ll binpow(ll a, ll b)
 {
-    if (a<b)
-        return a;
-    return b;
+    ll res = 1;
+    while (b > 0)
+    {
+        if (b & 1)
+            res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
 }
 
-ll f[26];
+ll gcd(ll a,ll b)
+{
+    if (b==0) return a;
+    return gcd(b,a%b);
+}
+
+string to_upper(string a)
+{
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
+    return a;
+}
+ 
+string to_lower(string a)
+{
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
+    return a;
+}
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
+    ll ans=0;
     string s;
     cin>>s;
-    ll ans=1e18,cur;
+    map<char,ll> m;
     for (auto i : s)
-        ++f[(i-'A')];
-    for (int i=0;i<100001;++i)
     {
-        cur=0;
-        for (ll j=0;j<26;++j)
-            if (f[j])
-                cur+=((j+1)*abs(i-f[j]));
-        ans=min(ans,cur);
+        ++m[i];
+        ans+=m[i];
     }
-    cout<<ans;
+    cout<<ansl
     return 0;
 }

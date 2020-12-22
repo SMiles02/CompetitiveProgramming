@@ -2,41 +2,78 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
-
-ll binpow(ll a, ll b)
-{
-    if (b == 0)
-        return 1;
-    ll res = binpow(a, b / 2);
-    res*=res;
-    if (b % 2)
-        return res * a;
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
 
 void solve()
 {
-    
+    int n,q,l,r,x=0,y=0;
+    ll score=0;
+    cin>>n>>q;
+    int a[n+2];
+    a[0]=0;a[n+1]=0;
+    for (int i=1;i<=n;++i)
+        cin>>a[i];
+    for (int i=2;i<n;++i)
+    {
+        if (a[i-1]<a[i]&&a[i]>a[i+1])
+            score+=a[i];
+        else if (a[i-1]>a[i]&&a[i]<a[i+1])
+            score-=a[i];
+    }
+    if (n>1)
+    {
+        if (a[1]>a[2])
+            x=a[1];
+        if (a[n]>a[n-1])
+            y=a[n];
+    }
+    else
+        score=1;
+    cout<<score+x+y<<"\n";
+    while (q--)
+    {
+        cin>>l>>r;
+        if (n>1)
+        {
+            for (int i=max(2,l-1);i<=min(n-1,min(l+1,r-2));++i)
+            {
+                if (a[i-1]<a[i]&&a[i]>a[i+1])
+                    score-=a[i];
+                if (a[i-1]>a[i]&&a[i]<a[i+1])
+                    score+=a[i];
+            }
+            for (int i=max(2,r-1);i<=min(n-1,r+1);++i)
+            {
+                if (a[i-1]<a[i]&&a[i]>a[i+1])
+                    score-=a[i];
+                if (a[i-1]>a[i]&&a[i]<a[i+1])
+                    score+=a[i];
+            }
+            swap(a[l],a[r]);
+            for (int i=max(2,l-1);i<=min(n-1,min(l+1,r-2));++i)
+            {
+                if (a[i-1]<a[i]&&a[i]>a[i+1])
+                    score+=a[i];
+                if (a[i-1]>a[i]&&a[i]<a[i+1])
+                    score-=a[i];
+            }
+            for (int i=max(2,r-1);i<=min(n-1,r+1);++i)
+            {
+                if (a[i-1]<a[i]&&a[i]>a[i+1])
+                    score+=a[i];
+                if (a[i-1]>a[i]&&a[i]<a[i+1])
+                    score-=a[i];
+            }
+            if (a[1]>a[2])
+                x=a[1];
+            else
+                x=0;
+            if (a[n]>a[n-1])
+                y=a[n];
+            else
+                y=0;
+        }
+        cout<<score+x+y<<"\n";
+    }
 }
 
 int main()

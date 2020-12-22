@@ -3,35 +3,38 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-int n,u,v;
-set<int> s;
+int dp[200001][2];
 vector<int> edges[200001];
 
-void dfs(int c, int p, int h)
+void dfs(int c, int p)
 {
-    if (s.find(p)==s.end())
-    {
-        cout<<c<<"!\n";
-        s.insert(p);
-        s.insert(c);
-    }
+    int t=0;
     for (int i : edges[c])
         if (i!=p)
-            dfs(i,c,h+1);
+        {
+            dfs(i,c);
+            dp[c][1]=max(dp[c][1],dp[i][0]+1);
+            t+=dp[i][1];
+        }
+    dp[c][0]=t;
+    for (int i : edges[c])
+        if (i!=p)
+            dp[c][1]=max(dp[c][1],t+dp[i][0]+1-dp[i][1]);
+    //cout<<c<<" "<<dp[c][0]<<" "<<dp[c][1]<<"\n";
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
+    int n,x,y;
     cin>>n;
     for (int i=1;i<n;++i)
     {
-        cin>>u>>v;
-        edges[u].push_back(v);
-        edges[v].push_back(u);
+        cin>>x>>y;
+        edges[x].push_back(y);
+        edges[y].push_back(x);
     }
-    s.insert(0);
-    dfs(1,0,1);
-    cout<<(sz(s)>>1);
+    dfs(1,0);
+    cout<<max(dp[1][0],dp[1][1]);
     return 0;
 }

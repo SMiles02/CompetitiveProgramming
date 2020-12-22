@@ -1,114 +1,63 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-ll binpow(ll a, ll b) {
-    if (b == 0)
-    {
-        return 1;
-    }
-    ll res = binpow(a, b / 2);
-    res*=res;
-    if (b % 2)
-    {
-        return res * a;
-    }
-    return res;
-}
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-ll gcd(ll a,ll b)
+int query(int x, int y)
 {
-    if (b==0) return a;
-    return gcd(b,a%b);
+    int k;
+    cout<<"? "<<x<<" "<<y<<endl;
+    cin>>k;
+    return k;
 }
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
-
-vector<int> v[2048];
 
 int main()
 {
-    //ios_base::sync_with_stdio(0); cin.tie(0);
-    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-    int n,k,m,x,t;
+    int n,a,b,c,d,e;
     cin>>n;
     vector<int> p(n);
-    for (int i=0;i<n;++i)
-        p[i]=i+1;
-    while (1)
-    {
-        shuffle(p.begin(), p.end(), rng);
-        cout<<"? "<<p[0]<<" "<<p[1]<<endl;
-        cin>>k;
-        if (__builtin_popcount(k)<5)
-            break;
-    }
-    m=k;
-    v[k].push_back(p[1]);
-    t=k;
+    iota(p.begin(), p.end(), 1);
+    shuffle(p.begin(), p.end(), rng);
+    a=p[0];b=p[1];c=query(a,b);
     for (int i=2;i<n;++i)
     {
-        cout<<"? "<<p[0]<<" "<<p[i]<<endl;
-        cin>>k;
-        m=min(m,k);
-        v[k].push_back(i);
-        t&=k;
-    }
-    if (sz(v[m])==1)
-        x=v[m][0];
-    else if (t!=0)
-    {
-        for (int i=0;i<sz(v[m]);++i)
+        d=query(b,p[i]);
+        if (d<c)
         {
-            t=2047;
-            for (int j=0;j<i;++j)
-            {
-                cout<<"? "<<v[m][i]<<" "<<v[m][j]<<endl;
-                cin>>k;
-                t&=k;
-            }
-            for (int j=i+1;i<sz(v[m]);++j)
-            {
-                cout<<"? "<<v[m][i]<<" "<<v[m][j]<<endl;
-                cin>>k;
-                t&=k;
-            }
-            if (t==0)
-            {
-                x=v[m][i];
-                break;
-            }
+            a=p[i];
+            c=d;
+        }
+        else if (c==d)
+        {
+            b=p[i];
+            c=query(a,b);
         }
     }
-    else
-        x=p[0];
+    while (1)
+    {
+        e=uniform_int_distribution<int>(1,n)(rng);
+        if (a==e||b==e)
+            continue;
+        c=query(a,e);d=query(b,e);
+        if (c<d)
+            break;
+        else if (d<c)
+        {
+            a=b;
+            break;
+        }
+    }
     int ans[n+1];
-    ans[x]=0;
-    for (int i=1;i<x;++i)
+    for (int i=1;i<=n;++i)
     {
-        cout<<"? "<<x<<" "<<i<<endl;
-        cin>>k;
-        ans[i]=k;
+        if (a==i)
+            ans[i]=0;
+        else
+            ans[i]=query(a,i);
     }
-    for (int i=x+1;i<=n;++i)
-    {
-        cout<<"? "<<x<<" "<<i<<endl;
-        cin>>k;
-        ans[i]=k;
-    }
-    cout<<"!";
+    cout<<"! ";
     for (int i=1;i<=n;++i)
         cout<<" "<<ans[i];
+    cout<<endl;
     return 0;
 }

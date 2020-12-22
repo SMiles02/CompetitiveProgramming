@@ -1,39 +1,36 @@
 #include <bits/stdc++.h>
 #define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-int binpow(int a, int b) {
-    if (b == 0)
-        return 1;
-    int res = binpow(a, b / 2);
-    if (b % 2)
-        return res * res * a;
-    else
-        return res * res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
+ll a[200001];
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,m,x,y;
+    cin>>n>>m;
+    cin>>x;
+    for (int i=1;i<m;++i)
+    {
+        cin>>y;
+        if (x==y)
+            continue;
+        a[0]+=abs(x-y);
+        a[min(x,y)]+=max(x,y)-1-abs(x-y);
+        if (min(x,y)+1==max(x,y))
+            a[max(x,y)]+=min(x,y)+1-max(x,y);
+        else
+        {
+            a[min(x,y)+1]+=abs(x-y)-max(x,y);
+            a[max(x,y)]+=min(x,y)+1-abs(x-y);
+        }
+        a[max(x,y)+1]+=abs(x-y)-min(x,y);
+        x=y;
+    }
+    for (int i=1;i<=n;++i)
+    {
+        a[i]+=a[i-1];
+        cout<<a[i]<<" ";
+    }
     return 0;
 }

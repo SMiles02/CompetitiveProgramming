@@ -7,12 +7,14 @@ using namespace std;
 
 ll binpow(ll a, ll b)
 {
-    if (b == 0)
-        return 1;
-    ll res = binpow(a, b / 2);
-    res*=res;
-    if (b % 2)
-        return res * a;
+    ll res = 1;
+    while (b > 0)
+    {
+        if (b & 1)
+            res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
     return res;
 }
 
@@ -37,26 +39,7 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,k,x;
-    ll ans=0;
-    set<int> s;
-    cin>>n>>k;
-    for (int i=0;i<n;++i)
-    {
-        cin>>x;
-        s.insert(x);
-    }
-    map<int,int> m;
-    vector<int> f;
-    for (int i=1;i<=k;++i)
-        if (k%i==0)
-            f.push_back(i);
-    for (int i : s)
-    {
-        for (int j : f)
-            ans+=m[i-j];
-        ++m[i];
-    }
-    cout<<ans*2;
+    int n;
+    cin>>n;
     return 0;
 }

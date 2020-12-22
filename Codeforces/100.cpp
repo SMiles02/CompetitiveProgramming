@@ -1,34 +1,52 @@
 #include <bits/stdc++.h>
-#define pii pair<int,int>
-#define f first
-#define s second
+#define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
+//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+//uniform_int_distribution<int>(1000,10000)(rng)
 
-int n,a[1000];
-
-bool fix(int x, int y)
+ll binpow(ll a, ll b)
 {
-    vector<int> v,w;
-    v.push_back({x,a[x]});
-    v.push_back({y,a[y]});
-    double d = 
-    for (int i=0;i<n;++i)
-        if (i!=x&&i!=y)
-        {
-            if ()
-        }
+    ll res = 1;
+    while (b > 0)
+    {
+        if (b & 1)
+            res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
+}
+
+ll gcd(ll a,ll b)
+{
+    if (b==0) return a;
+    return gcd(b,a%b);
+}
+
+string to_upper(string a)
+{
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
+    return a;
+}
+ 
+string to_lower(string a)
+{
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
+    return a;
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    cin>>n;
-    for (int i=0;i<n;++i)
-        cin>>a[i];
-    if (fix(0,1)||fix(0,2)||fix(1,2))
-        cout<<"Yes";
-    else
-        cout<<"No";
+    int f[65];
+    f[1]=0;
+    cout<<"f("<<1<<") = "<<f[1]<<"\n";
+    for (int i=2;i<65;++i)
+    {
+        f[i]=2*f[i/2]+1;
+        if (__builtin_popcount(i)==1)
+            cout<<"f("<<i<<") = "<<f[i]<<"\n";
+    }
     return 0;
 }
