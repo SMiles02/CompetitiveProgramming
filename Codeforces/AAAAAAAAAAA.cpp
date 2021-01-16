@@ -3,51 +3,34 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-const int mn = 2e5+7, INF = 1e9+7;
-int segTree[mn*4];
+int mx=0;
 
-void build(int i, int l, int r)
+void check(int a, int b)
 {
-    if (l==r)
+    int x=a,y=b;
+    for (int i=0;1;++i)
     {
-        cin>>segTree[i];
-        return;
+        if (x<y)
+            x+=a;
+        else if (y<x)
+            y+=b;
+        else
+        {
+            if (i>mx)
+            {
+                cout<<i<<": "<<a<<" "<<b<<"\n";
+                mx=i;
+            }
+            return;
+        }
     }
-    build(i*2+1,l,l+(r-l)/2);
-    build(i*2+2,l+(r-l)/2+1,r);
-    segTree[i]=min(segTree[i*2+1],segTree[i*2+2]);
-}
-
-void update(int i, int cL, int cR, int j, int x)
-{
-    if (j<cL||cR<j)
-        return;
-    if (cL==cR)
-    {
-        segTree[i]=x;
-        return;
-    }
-    update(i*2+1,cL,cL+(cR-cL)/2,j,x);
-    update(i*2+2,cL+(cR-cL)/2+1,cR,j,x);
-    segTree[i]=min(segTree[i*2+1],segTree[i*2+2]);
-}
-
-int query(int i, int cL, int cR, int l, int r)
-{
-    if (r<cL||cR<l)
-        return INF;
-    if (l<=cL&&cR<=r)
-        return segTree[i];
-    return min(query(i*2+1,cL,cL+(cR-cL)/2,l,r),query(i*2+2,cL+(cR-cL)/2+1,cR,l,r));
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,q,t,l,r;
-    cin>>n>>q;
-    build(0,1,n);
-    //update(0,1,n,update_indice,new_val)
-    //query(0,1,n,left_q,right_q)
+    for (int i=1;i<=20;++i)
+        for (int j=1;j<=20;++j)
+            check(i,j);
     return 0;
 }
