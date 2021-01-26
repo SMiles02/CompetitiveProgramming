@@ -36,25 +36,36 @@ string to_lower(string a)
     return a;
 }
 
-const int INF = 1e9;
-int ans[10000000];
+void solve()
+{
+    int a,b,k;
+    cin>>a>>b>>k;
+    int c[k][2],f[2][max(a,b)+1];
+    vector<int> v[a+1];
+    for (int i=0;i<2;++i)
+        for (int j=0;j<=max(a,b);++j)
+            f[i][j]=0;
+    for (int j=0;j<2;++j)
+        for (int i=0;i<k;++i)
+        {
+            cin>>c[i][j];
+            ++f[j][c[i][j]];
+        }
+    for (int i=0;i<k;++i)
+        v[c[i][0]].push_back(c[i][1]);
+    ll ans=0;
+    for (int i=1;i<=a;++i)
+        for (int j : v[i])
+            ans+=k-f[0][i]-f[1][j]+1;
+    cout<<ans/2<<"\n";
+}
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n=1e6,x,y=0;
-    for (int i=0;i<=n;++i)
-        ans[i]=INF;
-    int c=0;
-    for (int i=0;i*2020<=(n+5*2020);++i)
-        for (int j=0;j*2021<=(n+5*2021);++j)
-            ans[i*2020+j*2021]=min(ans[i*2020+j*2021],++c);
-    for (int i=0;i<=n;++i)
-        if (ans[i]^INF&&ans[i]>y)
-        {
-            y=ans[i];
-            x=i;
-        }
-    cout<<x<<" "<<y<<"\n";
+    int n;
+    cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

@@ -36,25 +36,44 @@ string to_lower(string a)
     return a;
 }
 
-const int INF = 1e9;
-int ans[10000000];
+int n;
+string s;
+
+ll f(int l, int r)
+{
+    ll x=0;
+    for (int i=l;i<=r;++i)
+    {
+        x*=10;
+        x+=(s[i]-'0');
+    }
+    return x;
+}
+
+ll ans;
+
+void rec(bitset<10> b, int l, int c, ll s)
+{
+    if (c==n-1)
+    {
+        s+=f(l+1,c);
+        ans+=s;
+        return;
+    }
+    rec(b,l,c+1,s);
+    s+=f(l+1,c);
+    b[c]=1;
+    l=c;
+    rec(b,l,c+1,s);
+} 
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n=1e6,x,y=0;
-    for (int i=0;i<=n;++i)
-        ans[i]=INF;
-    int c=0;
-    for (int i=0;i*2020<=(n+5*2020);++i)
-        for (int j=0;j*2021<=(n+5*2021);++j)
-            ans[i*2020+j*2021]=min(ans[i*2020+j*2021],++c);
-    for (int i=0;i<=n;++i)
-        if (ans[i]^INF&&ans[i]>y)
-        {
-            y=ans[i];
-            x=i;
-        }
-    cout<<x<<" "<<y<<"\n";
+    cin>>s;
+    n=sz(s);
+    bitset<10> b;
+    rec(b,-1,0,0);
+    cout<<ans;
     return 0;
 }

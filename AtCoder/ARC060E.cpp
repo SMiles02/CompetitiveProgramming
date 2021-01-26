@@ -36,25 +36,45 @@ string to_lower(string a)
     return a;
 }
 
-const int INF = 1e9;
-int ans[10000000];
+const int mn = 1e5+5, lg = 19, INF=1e9;
+int r[lg][mn];
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n=1e6,x,y=0;
-    for (int i=0;i<=n;++i)
-        ans[i]=INF;
-    int c=0;
-    for (int i=0;i*2020<=(n+5*2020);++i)
-        for (int j=0;j*2021<=(n+5*2021);++j)
-            ans[i*2020+j*2021]=min(ans[i*2020+j*2021],++c);
-    for (int i=0;i<=n;++i)
-        if (ans[i]^INF&&ans[i]>y)
-        {
-            y=ans[i];
-            x=i;
-        }
-    cout<<x<<" "<<y<<"\n";
+    int n,l,q,k,x,y,ans;
+    cin>>n;
+    int a[n+1];
+    for (int i=1;i<=n;++i)
+        cin>>a[i];
+    cin>>l;
+    k=n;
+    for (int i=0;i<lg;++i)
+        r[i][n]=r[i][n+1]=n+1;
+    for (int i=n-1;i;--i)
+    {
+        while (a[k]-a[i]>l)
+            --k;
+        r[0][i]=k;
+        for (int j=1;j<lg;++j)
+            r[j][i]=r[j-1][r[j-1][i]];
+    }
+    cin>>q;
+    while (q--)
+    {
+        cin>>x>>y;
+        ans=0;
+        if (x>y)
+            swap(x,y);
+        for (int i=lg-1;i>=0;--i)
+            if (r[i][x]<=y)
+            {
+                ans+=(1<<i);
+                x=r[i][x];
+            }
+        if (x!=y)
+            ++ans;
+        cout<<ans<<"\n";
+    }
     return 0;
 }

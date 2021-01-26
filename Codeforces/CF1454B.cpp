@@ -36,25 +36,36 @@ string to_lower(string a)
     return a;
 }
 
-const int INF = 1e9;
-int ans[10000000];
+void solve()
+{
+    int n,x,y;
+    cin>>n;
+    map<int,int> m;
+    int a[n];
+    for (int i=0;i<n;++i)
+    {
+        cin>>a[i];
+        ++m[a[i]];
+    }
+    x=n+1;y=-1;
+    for (int i=0;i<n;++i)
+        if (m[a[i]]==1&&a[i]<x)
+        {
+            x=a[i];
+            y=i+1;
+        }
+    if (y==-1)
+        cout<<"-1\n";
+    else
+        cout<<y<<"\n";
+}
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n=1e6,x,y=0;
-    for (int i=0;i<=n;++i)
-        ans[i]=INF;
-    int c=0;
-    for (int i=0;i*2020<=(n+5*2020);++i)
-        for (int j=0;j*2021<=(n+5*2021);++j)
-            ans[i*2020+j*2021]=min(ans[i*2020+j*2021],++c);
-    for (int i=0;i<=n;++i)
-        if (ans[i]^INF&&ans[i]>y)
-        {
-            y=ans[i];
-            x=i;
-        }
-    cout<<x<<" "<<y<<"\n";
+    int n;
+    cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

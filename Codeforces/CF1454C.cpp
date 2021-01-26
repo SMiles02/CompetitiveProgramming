@@ -36,25 +36,43 @@ string to_lower(string a)
     return a;
 }
 
-const int INF = 1e9;
-int ans[10000000];
+vector<int> v[200001];
+
+void solve()
+{
+    int n,k,ans,cur;
+    cin>>n;
+    ans=n;
+    for (int i=1;i<=n;++i)
+    {
+        v[i].clear();
+        v[i].push_back(0);
+    }
+    for (int i=1;i<=n;++i)
+    {
+        cin>>k;
+        v[k].push_back(i);
+    }
+    for (int i=1;i<=n;++i)
+        if (sz(v[i])>1)
+        {
+            cur=0;
+            for (int j=1;j<sz(v[i]);++j)
+                if (v[i][j]-1>v[i][j-1])
+                    ++cur;
+            if (v[i].back()<n)
+                ++cur;
+            ans=min(ans,cur);
+        }
+    cout<<ans<<"\n";
+}
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n=1e6,x,y=0;
-    for (int i=0;i<=n;++i)
-        ans[i]=INF;
-    int c=0;
-    for (int i=0;i*2020<=(n+5*2020);++i)
-        for (int j=0;j*2021<=(n+5*2021);++j)
-            ans[i*2020+j*2021]=min(ans[i*2020+j*2021],++c);
-    for (int i=0;i<=n;++i)
-        if (ans[i]^INF&&ans[i]>y)
-        {
-            y=ans[i];
-            x=i;
-        }
-    cout<<x<<" "<<y<<"\n";
+    int n;
+    cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

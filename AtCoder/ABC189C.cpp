@@ -36,25 +36,23 @@ string to_lower(string a)
     return a;
 }
 
-const int INF = 1e9;
-int ans[10000000];
-
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n=1e6,x,y=0;
-    for (int i=0;i<=n;++i)
-        ans[i]=INF;
-    int c=0;
-    for (int i=0;i*2020<=(n+5*2020);++i)
-        for (int j=0;j*2021<=(n+5*2021);++j)
-            ans[i*2020+j*2021]=min(ans[i*2020+j*2021],++c);
-    for (int i=0;i<=n;++i)
-        if (ans[i]^INF&&ans[i]>y)
+    int n,ans=0,cur;
+    cin>>n;
+    int a[n];
+    for (int i=0;i<n;++i)
+        cin>>a[i];
+    for (int i=0;i<n;++i)
+    {
+        cur=a[i];
+        for (int j=i;j<n;++j)
         {
-            y=ans[i];
-            x=i;
+            cur=min(cur,a[j]);
+            ans=max(ans,cur*(j-i+1));
         }
-    cout<<x<<" "<<y<<"\n";
+    }
+    cout<<ans;
     return 0;
 }
