@@ -2,44 +2,58 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
+const int mn = 2e5+7, INF = 1e9+7;
+int segTree[mn<<2];
+
+void build(int i, int l, int r)
 {
-    ll res = 1;
-    while (b > 0)
+    if (l==r)
     {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
+        cin>>segTree[i];
+        return;
     }
-    return res;
+    build((i<<1)+1,l,l+((r-l)>>1));
+    build((i<<1)+2,l+((r-l)>>1)+1,r);
+    segTree[i]=min(segTree[(i<<1)+1],segTree[(i<<1)+2]);
 }
 
-ll gcd(ll a,ll b)
+void update(int i, int cL, int cR, int j, int x)
 {
-    if (b==0) return a;
-    return gcd(b,a%b);
+    if (j<cL||cR<j)
+        return;
+    if (cL==cR)
+    {
+        segTree[i]=x;
+        return;
+    }
+    update((i<<1)+1,cL,cL+((cR-cL)>>1),j,x);
+    update((i<<1)+2,cL+((cR-cL)>>1)+1,cR,j,x);
+    segTree[i]=min(segTree[(i<<1)+1],segTree[(i<<1)+2]);
 }
 
-string to_upper(string a)
+int query(int i, int cL, int cR, int l, int r)
 {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
+    if (r<cL||cR<l)
+        return INF;
+    if (l<=cL&&cR<=r)
+        return segTree[i];
+    return min(query((i<<1)+1,cL,cL+((cR-cL)>>1),l,r),query((i<<1)+2,cL+((cR-cL)>>1)+1,cR,l,r));
 }
  
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
-
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,q,t,l,r;
+    cin>>n>>q;
+    build(0,1,n);
+    while (q--)
+    {
+        cin>>t>>l>>r;
+        if (t==1)
+            update(0,1,n,l,r);
+        else
+            cout<<query(0,1,n,l,r)<<"\n";
+    }
     return 0;
 }

@@ -4,7 +4,7 @@
 using namespace std;
 
 const int mn = 2e5+7, INF = 1e9+7;
-int segTree[mn*4];
+int segTree[mn<<2];
 
 void build(int i, int l, int r)
 {
@@ -13,9 +13,9 @@ void build(int i, int l, int r)
         cin>>segTree[i];
         return;
     }
-    build(i*2+1,l,l+(r-l)/2);
-    build(i*2+2,l+(r-l)/2+1,r);
-    segTree[i]=min(segTree[i*2+1],segTree[i*2+2]);
+    build((i<<1)+1,l,l+((r-l)>>1));
+    build((i<<1)+2,l+((r-l)>>1)+1,r);
+    segTree[i]=min(segTree[(i<<1)+1],segTree[(i<<1)+2]);
 }
 
 void update(int i, int cL, int cR, int j, int x)
@@ -27,9 +27,9 @@ void update(int i, int cL, int cR, int j, int x)
         segTree[i]=x;
         return;
     }
-    update(i*2+1,cL,cL+(cR-cL)/2,j,x);
-    update(i*2+2,cL+(cR-cL)/2+1,cR,j,x);
-    segTree[i]=min(segTree[i*2+1],segTree[i*2+2]);
+    update((i<<1)+1,cL,cL+((cR-cL)>>1),j,x);
+    update((i<<1)+2,cL+((cR-cL)>>1)+1,cR,j,x);
+    segTree[i]=min(segTree[(i<<1)+1],segTree[(i<<1)+2]);
 }
 
 int query(int i, int cL, int cR, int l, int r)
@@ -38,7 +38,7 @@ int query(int i, int cL, int cR, int l, int r)
         return INF;
     if (l<=cL&&cR<=r)
         return segTree[i];
-    return min(query(i*2+1,cL,cL+(cR-cL)/2,l,r),query(i*2+2,cL+(cR-cL)/2+1,cR,l,r));
+    return min(query((i<<1)+1,cL,cL+((cR-cL)>>1),l,r),query((i<<1)+2,cL+((cR-cL)>>1)+1,cR,l,r));
 }
 
 int main()
