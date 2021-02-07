@@ -18,10 +18,10 @@ void dfs1(int c) //first dfs with regular edges
     s.push(c);
 }
 
-void dfs2(int c, int k) //second dfs with reversed edges, allocates vertice c into its SCC k
+void dfs2(int c, int k) //second dfs with reversed edges
 {
     done[c]=1;
-    ans[c]=k;
+    ans[c]=k; //vertice c is in SCC k
     for (int i : e2[c])
         if (!done[i])
             dfs2(i,k);

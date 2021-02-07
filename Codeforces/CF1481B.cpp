@@ -2,7 +2,7 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 //uniform_int_distribution<int>(1000,10000)(rng)
 
 ll binpow(ll a, ll b)
@@ -36,17 +36,44 @@ string to_lower(string a)
     return a;
 }
 
+void solve()
+{
+    int n,k,cur;
+    cin>>n>>k;
+    int a[n];
+    for (int i=0;i<n;++i)
+        cin>>a[i];
+    if (k>100*n)
+    {
+        cout<<"-1\n";
+        return;
+    }
+    for (int i=1;i<=k;++i)
+    {
+        for (int j=0;j<n;++j)
+        {
+            if (j==n-1)
+            {
+                cout<<"-1\n";
+                return;
+            }
+            if (a[j]<a[j+1])
+            {
+                ++a[j];
+                cur=j+1;
+                break;
+            }
+        }
+    }
+    cout<<cur<<"\n";
+}
+
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n=5000,k=1000000000;
-    int a[n];
-    a[0]=261323261;a[1]=25262018;
-    a[2]=69;a[3]=420;a[4]=k-a[2]-a[3];
-    for (int i=5;i<n;++i)
-        a[i]=uniform_int_distribution<int>(1000,10000)(rng);
-    cout<<n<<" "<<k<<"\n";
-    for (int i=0;i<n;++i)
-        cout<<a[i]<<" ";
+    int n;
+    cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

@@ -3,8 +3,8 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-const int mn = 6e5+69;
-int pt[mn],rk[mn];
+const int mn = 1e5+1;
+int pt[mn],rk[mn],ans,mx=1;
  
 int find_set(int v) {
     if (v == pt[v])
@@ -20,7 +20,7 @@ void make_set(int v) {
     }
 }
  
-void unite(int a, int b) {
+void union_sets(int a, int b) {
     a = find_set(a);
     b = find_set(b);
     if (a != b) {
@@ -28,13 +28,23 @@ void unite(int a, int b) {
             swap(a, b);
         pt[b] = a;
         rk[a] += rk[b];
+        --ans;
+        mx=max(mx,rk[a]);
     }
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,m,x,y;
+    cin>>n>>m;
+    ans=n;
+    make_set(n);
+    while (m--)
+    {
+        cin>>x>>y;
+        union_sets(x,y);
+        cout<<ans<<" "<<mx<<"\n";
+    }
     return 0;
 }
