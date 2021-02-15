@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
-#define int ll
 using namespace std;
 //mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 //uniform_int_distribution<int>(1000,10000)(rng)
@@ -37,32 +36,30 @@ string to_lower(string a)
     return a;
 }
 
-signed main()
+int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    ll s,k;
-    cin>>s>>k;
-    map<int,ll> m;
-    m[k]=1;
-    for (int i=k+1;i<=k+60;++i)
+    int n,ans=0,cur=0;
+    cin>>n;
+    int a[n],next[n];
+    for (int i=0;i<n;++i)
+        cin>>a[i];
+    stack<int> s;
+    for (int i=n-1;i>=0;--i)
     {
-        for (int j=max(i-k,k);j<i;++j)
-            m[i]+=m[j];
-        //cout<<i<<": "<<m[i]<<"\n";
+        while (!s.empty()&&a[s.top()]<a[i])
+            s.pop();
+        if (s.empty())
+            next[i]=n;
+        else
+            next[i]=s.top();
+        s.push(i);
     }
-    vector<int> v;
-    for (int i=k+60;i>=k;--i)
+    while (cur<n)
     {
-        if (m[i]<=s&&m[i]>0)
-        {
-            s-=m[i];
-            v.push_back(m[i]);
-        }
+        ++ans;
+        cur=next[cur];
     }
-    v.push_back(0);
-    //cout<<s<<"\n";
-    cout<<sz(v)<<"\n";
-    for (int i : v)
-        cout<<i<<" ";
+    cout<<ans;
     return 0;
 }

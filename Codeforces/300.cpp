@@ -1,53 +1,64 @@
+#pragma GCC optimize("Ofast,unroll-loops")
+#pragma GCC target("avx,avx2,sse,sse2")
 #include <bits/stdc++.h>
-#define ll long long
 #define sz(x) (int)(x).size()
+#define pii pair<int,int>
+#define f first
+#define s second
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
+const int maxn = 1001, INF = 1e8+69;
+int n,m,x,dist[maxn][maxn],y;;
+vector<pii> edges[maxn];
+priority_queue<pii,vector<pii>,greater<pii>> q;
+
+void dijkstra(int src)
 {
-    ll res = 1;
-    while (b > 0)
+    for (int i=1;i<=n;++i)
+        dist[src][i]=INF;
+    q.push({0,src});
+    dist[src][src]=0;
+    while (!q.empty())
     {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
+        y=q.top().f;
+        x=q.top().s;
+        q.pop();
+        if (dist[src][x]<y)
+            continue;
+        for (pii i : edges[x])
+            if (y+i.s<dist[src][i.f])
+            {
+                dist[src][i.f]=y+i.s;
+                q.push({dist[src][i.f],i.f});
+            }
     }
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    ll ans=0;
-    string s;
-    cin>>s;
-    map<char,ll> m;
-    for (auto i : s)
+    freopen("roadhelp.in", "r", stdin);
+    freopen("roadhelp.out", "w", stdout);
+    cin>>n>>m;
+    int a,b,c;
+    vector<array<int,3>> v(m);
+    for (int i=0;i<m;++i)
     {
-        ++m[i];
-        ans+=m[i];
+        cin>>a>>b>>c;
+        edges[a].push_back({b,c});
+        edges[b].push_back({a,c});
+        v[i]={a,b,c};
     }
-    cout<<ansl
+    for (int i=1;i<=n;++i)
+        dijkstra(i);
+    for (int i=0;i<m;++i)
+    {
+        c=0;
+        for (int j=1;j<=n;++j)
+            for (int k=1;k<=n;++k)
+                if (dist[j][v[i][0]]+dist[k][v[i][1]]+v[i][2]==dist[j][k])
+                    ++c;
+        cout<<(c<<1)<<"\n";
+    }
     return 0;
 }

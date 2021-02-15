@@ -2,51 +2,52 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
-{
-    ll res = 1;
-    while (b > 0)
-    {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
-    }
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
+const int mn = 1e5+7;
+int pt[mn],rk[mn];
+ 
+int find_set(int v) {
+    if (v == pt[v])
+        return v;
+    return pt[v] = find_set(pt[v]);
 }
  
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
+void make_set(int v) {
+    for (int i=1;i<=v;++i)
+    {
+        pt[i] = i;
+        rk[i] = 1;
+    }
+}
+ 
+void unite(int a, int b) {
+    a = find_set(a);
+    b = find_set(b);
+    if (a != b) {
+        if (rk[a] < rk[b])
+            swap(a, b);
+        pt[b] = a;
+        rk[a] += rk[b];
+    }
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int f[65];
-    f[1]=0;
-    cout<<"f("<<1<<") = "<<f[1]<<"\n";
-    for (int i=2;i<65;++i)
+    //freopen("test.in", "r", stdin);
+    //freopen("test.out", "w", stdout);
+    int n,k,fA=1,fB=1;
+    cin>>n;
+    make_set(n);
+    vector<int> v;
+    for (int i=1;i<=n;++i)
     {
-        f[i]=2*f[i/2]+1;
-        if (__builtin_popcount(i)==1)
-            cout<<"f("<<i<<") = "<<f[i]<<"\n";
+        cin>>k;
+        unite(k,i);
     }
+    for (int i=1;i<=n;++i)
+        if (find_set(i)==i)
+            v.push_back(rk[i]);
+    
     return 0;
 }
