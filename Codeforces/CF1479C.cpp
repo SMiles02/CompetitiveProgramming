@@ -3,59 +3,57 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-int range[33][2];
+int hsb(int k)
+{
+    while (__builtin_popcount(k)>1)
+        k-=(k&-k);
+    return k;
+}
+
 vector<array<int,2>> edges[33];
-bitset<33> done[33];
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int l,r,n,m=0,d=1,rD;
+    int l,r,x,z,k,e=0;
     cin>>l>>r;
-    n=min(l+1,32);
-    for (int i=2;i<n;++i)
-    {
-        edges[i].push_back({i+1,1});
-        done[i][i+1]=1;
-    }
-    edges[1].push_back({2,l-n+2});
-    done[1][2]=1;
-    rD=l;
-    range[2][0]=range[2][1]=l-n+2;
-    m=n-1;
-    d=1;
-    for (int i=3;i<=n;++i)
-        range[i][0]=range[i][1]=range[i-1][0]+1;
-    for (int i=1;i<=n&&r-rD>d;++i)
-        for (int j=i+2;j<=n&&r-rD>d;++j)
+    x=hsb(r-l+1);
+    for (int i=0;;++i)
+        if (x==(1<<i))
         {
-            //cout<<i<<" "<<j<<"\n";
-            done[i][j]=1;
-            edges[i].push_back({j,range[j][1]+1-range[i][0]});
-            ++m;
-            for (int k=j;k<=n;++k)
-            {
-                range[k][1]+=range[i][1]-range[i][0]+1;
-                rD=max(d,range[k][1]-range[k][0]+1);
-            }
-            //cout<<i<<" "<<j<<" "<<range[4][1]<<"\n";
-            rD=range[n][1];
+            k=i;
+            break;
         }
-    for (int i=1;i<=n;++i)
-        for (int j=i+1;j<=n;++j)
-            if (!done[i][j]&&r-rD==range[i][1]-range[i][0]+1)
-            {
-                edges[i].push_back({j,r-range[i][1]});
-                rD=r;
-                ++m;
-            }
-    if (d^r)
+    for (int j=2;j<k+3;++j)
     {
-        cout<<"NO\n";
-        return 0;
+        edges[1].push_back({j,l});
+        ++e;
     }
-    cout<<n<<" "<<m<<"\n";
-    for (int i=1;i<=n;++i)
+    for (int i=2;i<k+2;++i)
+        for (int j=i+1;j<k+3;++j)
+        {
+            edges[i].push_back({j,1<<(i-2)});
+            ++e;
+        }
+    cout<<"YES\n";
+    z=r-l;
+    if (z)
+    {
+        cout<<k+3;
+        edges[1].push_back({k+3,l});
+        ++e;
+        for (int i=0;i<=k;++i)
+            if ((1<<i)&z)
+            {
+                z^=(1<<i);
+                edges[i+2].push_back({k+3,z+1});
+                ++e;
+            }
+    }
+    else
+        cout<<k+2;
+    cout<<" "<<e<<"\n";
+    for (int i=1;i<k+3;++i)
         for (auto j : edges[i])
             cout<<i<<" "<<j[0]<<" "<<j[1]<<"\n";
     return 0;

@@ -1,40 +1,57 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
 void solve()
 {
-    int n,m,B=0,W=0,x,y;
-    int a=0,b=0,c=0,d=0;
-    cin>>n>>m;
-    while (m--)
+    int n,q,x,y;
+    cin>>n>>q;
+    set<int> b1;
+    vector<int> b2={n+1};
+    map<int,int> m;
+    while (q--)
     {
         cin>>x>>y;
-        if ((x+y)&1)
-            ++B;
-        else
-            ++W;
-        if (x==1)
+        if (b1.find(y)!=b1.end())
         {
-            if (y&1)
-                ++a;
-            else
-                ++b;
+            b1.erase(b1.find(y));
+            b2.push_back(y);
         }
         else
         {
-            if (y&1)
-                ++c;
+            b1.insert(y);
+            if ((x+y)&1)
+                m[y]=1;
             else
-                ++d;
+                m[y]=2;
         }
-
     }
-    if (W==B&&a<2&&b<2&&c<2&&d<2)
-        cout<<"YES\n";
-    else
+    x=0;
+    y=0;
+    sort(b2.begin(), b2.end());
+    for (int i : b1)
+    {
+        while (b2[y]<i)
+        {
+            if (x)
+            {
+                cout<<"NO\n";
+                return;
+            }
+            ++y;
+        }
+        if (m[i]==x)
+        {
+            cout<<"NO\n";
+            return;
+        }
+        x+=m[i];
+        if (x==3)
+            x=0;
+    }
+    if (x)
         cout<<"NO\n";
+    else
+        cout<<"YES\n";
 }
 
 int main()

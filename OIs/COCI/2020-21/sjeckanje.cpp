@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 #define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
 const int mn = 2e5+4;
@@ -89,12 +88,6 @@ int main()
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n,q,l,r,x;
     cin>>n>>q;
-    if (n==1)
-    {
-        while (q--)
-            cout<<"0\n";
-        return 0;
-    }
     build(0,1,n);
     while (q--)
     {
