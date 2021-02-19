@@ -57,21 +57,29 @@ struct pst {
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,q;
+    int n,q,t,k,x,y;
     cin>>n>>q;
     for (int i=1;i<=n;++i)
         cin>>arr[i];
     pst seg(n);
-    // seg.clone(k);
-    // Creates a copy of k at
-    // the newest position.
-
-    // seg.update(k,i,x);
-    // Updates array k position
-    // i to x
-
-    // seg.query(k,l,r)
-    // Returns the sum of a[l..r]
-    // in array k
+    while (q--)
+    {
+        cin>>t;
+        if (t==1)
+        {
+            cin>>k>>x>>y;
+            seg.update(k,x,y);
+        }
+        else if (t==2)
+        {
+            cin>>k>>x>>y;
+            cout<<seg.query(k,x,y)<<"\n";
+        }
+        else
+        {
+            cin>>k;
+            seg.clone(k);
+        }
+    }
     return 0;
 }
