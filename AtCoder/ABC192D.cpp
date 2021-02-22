@@ -39,9 +39,10 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    string vowel = "aeiou", pre = "kgsztdnhbpmyrw";
-    for (auto i : pre)
-        for (auto j : vowel)
-            cout<<i<<j<<"\n";
+    string s;
+    cin>>s;
+    ll n;
+    cin>>n;
+    if (sz(s)==)
     return 0;
 }

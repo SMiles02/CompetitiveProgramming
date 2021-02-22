@@ -36,12 +36,27 @@ string to_lower(string a)
     return a;
 }
 
+int f[26];
+
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    string vowel = "aeiou", pre = "kgsztdnhbpmyrw";
-    for (auto i : pre)
-        for (auto j : vowel)
-            cout<<i<<j<<"\n";
+    string s;
+    cin>>s;
+    int n=sz(s);
+    ll ans=0;
+    for (int i=n-1;i>1;--i)
+    {
+        if (s[i]!=s[i-1]&&s[i-1]==s[i-2])
+        {
+            ans+=n-i-f[s[i-1]-'a'];
+            for (int j=0;j<26;++j)
+                f[j]=0;
+            f[s[i-1]-'a']=n-i;
+        }
+        else
+            ++f[s[i]-'a'];
+    }
+    cout<<ans;
     return 0;
 }
