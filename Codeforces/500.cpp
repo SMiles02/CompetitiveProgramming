@@ -39,9 +39,15 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    //freopen("test.in", "r", stdin);
-    //freopen("test.out", "w", stdout);
-    int n;
+    ll n,a;
     cin>>n;
+    for (ll d=1;1;++d)
+        if ((d*(n-1)*(2*(n-1)*d-n))%(2*n)==0&&(d*(n-1)*(2*(n-1)*d-n))/(2*n)>0)
+        {
+            a=(d*(n-1)*(2*(n-1)*d-n))/(2*n);
+            for (int i=0;i<n;++i)
+                cout<<a+d*i<<" ";
+            return 0;
+        }
     return 0;
 }

@@ -2,64 +2,45 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
+int n,k,a[100000];
+
+int check(int r)
 {
-    ll res = 1;
-    while (b > 0)
+    int c=1,m=a[0]+r;
+    for (int i=0;i<n;++i)
+        if (abs(m-a[i])>r)
+        {
+            ++c;
+            m=a[i]+r;
+        }
+    return c;
+}
+
+void solve()
+{
+    cin>>n>>k;
+    for (int i=0;i<n;++i)
+        cin>>a[i];
+    sort(a,a+n);
+    int l=0,r=1e8,m;
+    while (l<r)
     {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
+        m=l+(r-l)/2;
+        if (check(m)<=k)
+            r=m;
+        else
+            l=m+1;
     }
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
+    cout<<l<<"\n";
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,ans=0,cur=0;
-    cin>>n;
-    int a[n],next[n];
-    for (int i=0;i<n;++i)
-        cin>>a[i];
-    stack<int> s;
-    for (int i=n-1;i>=0;--i)
-    {
-        while (!s.empty()&&a[s.top()]<a[i])
-            s.pop();
-        if (s.empty())
-            next[i]=n;
-        else
-            next[i]=s.top();
-        s.push(i);
-    }
-    while (cur<n)
-    {
-        ++ans;
-        cur=next[cur];
-    }
-    cout<<ans;
+    int t;
+    cin>>t;
+    while (t--)
+        solve();
     return 0;
 }

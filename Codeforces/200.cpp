@@ -36,27 +36,23 @@ string to_lower(string a)
     return a;
 }
 
-bool isPrime(int k)
+string s;
+
+void print(int l, int r)
 {
-    for (int i=2;i*i<=k;++i)
-        if (k%i==0)
-            return 0;
-    return 1;
+    for (int i=l;i<=r;++i)
+        cout<<s[i];
+    cout<<" ";
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    //freopen("test.in", "r", stdin);
-    //freopen("test.out", "w", stdout);
-    int c=0,d=0;
-    for (int i=2;i+c<=100000;++i)
-        if (isPrime(i))
-        {
-            cout<<i<<" ";
-            c+=i;
-            ++d;
-        }
-    cout<<"\n"<<d<<"!\n";
+    int n;
+    cin>>n;
+    cin>>s;
+    print(0,0);
+    print(1,n-2);
+    print(n-1,n-1);
     return 0;
 }

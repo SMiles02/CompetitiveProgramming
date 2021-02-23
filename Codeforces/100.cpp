@@ -2,46 +2,99 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
-{
-    ll res = 1;
-    while (b > 0)
-    {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
-    }
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
+int n,cur=10,w;
+string s,t;
+bitset<10> dp[200001][3];
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    string vowel = "aeiou", pre = "kgsztdnhbpmyrw";
-    for (auto i : pre)
-        for (auto j : vowel)
-            cout<<i<<j<<"\n";
+    cin>>n;
+    cin>>s;
+    cin>>t;
+    dp[n][0][0]=1;
+    for (int i=n-1;i>=0;--i)
+    {
+        if (t[i]=='*')
+        {
+            for (int j=(s[i]-'0');j<10;++j)
+                for (int k=0;k<10;++k)
+                    dp[i][2][j]|=dp[i+1][1][k];
+            for (int j=1+(s[i]-'0');j<10;++j)
+                for (int k=0;k<10;++k)
+                    dp[i][1][j]|=dp[i+1][0][k]|dp[i+1][1][k];
+            for (int j=0;j<10;++j)
+                for (int k=0;k<10;++k)
+                    dp[i][0][j]|=(dp[i+1][0][k]|dp[i+1][1][k]|dp[i+1][2][k]);
+        }
+        else
+        {
+            if (t[i]>=s[i])
+            {
+                for (int k=0;k<10;++k)
+                    dp[i][2][t[i]-'0']|=dp[i+1][1][k]|dp[i+1][2][k];
+            }
+            if (t[i]>s[i])
+            {
+                for (int k=0;k<10;++k)
+                    dp[i][1][t[i]-'0']|=dp[i+1][0][k]|dp[i+1][1][k]|dp[i+1][2][k];
+            }
+            for (int k=0;k<10;++k)
+                dp[i][0][t[i]-'0']|=dp[i+1][0][k]|dp[i+1][1][k]|dp[i+1][2][k];
+        }
+    }
+    for (int i=9;i>=0;--i)
+    {
+        if (dp[0][2][i])
+        {
+            cur=i;
+            w=2;
+        }
+        if (dp[0][1][i])
+        {
+            cur=i;
+            w=1;
+        }
+    }
+    if (cur=10)
+    {
+        cout<<-1;
+        return 0;
+    }
+    for (int i=0;i<n;++i)
+    {
+        cout<<cur;
+        if (w==2)
+        {
+            for (int k=0;k<10;++k)
+                for (int j=1;j<3;++j)
+                    if (dp[i+1][j][k])
+                    {
+                        w=j;
+                        cur=k;
+                    }
+        }
+        else if (w==1)
+        {
+            for (int k=0;k<10;++k)
+                for (int j=0;j<2;++j)
+                    if (dp[i+1][j][k])
+                    {
+                        w=j;
+                        cur=k;
+                    }
+        }
+        else
+        {
+            for (int k=0;k<10;++k)
+                for (int j=0;j<1;++j)
+                    if (dp[i+1][j][k])
+                    {
+                        w=j;
+                        cur=k;
+                    }
+        }
+    }
     return 0;
 }
