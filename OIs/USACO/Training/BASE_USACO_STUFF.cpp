@@ -6,18 +6,20 @@ LANG: C++14
 
 #include <bits/stdc++.h>
 #define ll long long
+#define sz(x) (int)(x).size()
 using namespace std;
+//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+//uniform_int_distribution<int>(1000,10000)(rng)
 
-int binpow(int a, int b) {
-    if (b == 0)
+ll binpow(ll a, ll b)
+{
+    ll res = 1;
+    while (b > 0)
     {
-        return 1;
-    }
-    ll res = binpow(a, b / 2);
-    res*=res;
-    if (b % 2)
-    {
-        return res * a;
+        if (b & 1)
+            res = res * a;
+        a = a * a;
+        b >>= 1;
     }
     return res;
 }
