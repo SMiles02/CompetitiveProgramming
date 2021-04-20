@@ -1,39 +1,58 @@
 #include <bits/stdc++.h>
-#define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
+int firstDigit(int k)
 {
-    ll res = 1;
-    while (b > 0)
+    while (k>10)
+        k/=10;
+    return k;
+}
+
+void solve()
+{
+    int n,k,c=1,x,y,o=0;
+    cin>>n>>k;
+    priority_queue<int,vector<int>,greater<int>> pq;
+    while (n)
     {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
+        if (n%10)
+            pq.push((n%10)*c);
+        n/=10;
+        c*=10;
     }
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
+    while (sz(pq)+o<k)
+    {
+        x=pq.top();
+        pq.pop();
+        y=firstDigit(x);
+        if (y>1)
+        {
+            for (int i=0;i<y;++i)
+                pq.push(x/y);
+        }
+        else if (x==1)
+            ++o;
+        else
+        {
+            for (int i=0;i<10;++i)
+                pq.push(x/10);
+        }
+    }
+    while (o--)
+        pq.push(1);
+    while (sz(pq)>k)
+    {
+        x=pq.top();pq.pop();
+        y=pq.top();pq.pop();
+        pq.push(x+y);
+    }
+    while (!pq.empty())
+    {
+        x=pq.top();pq.pop();
+        cout<<x<<" ";
+    }
+    cout<<"\n";
 }
 
 int main()
@@ -41,5 +60,7 @@ int main()
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
     cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

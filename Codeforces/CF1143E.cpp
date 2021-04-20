@@ -1,43 +1,41 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
-{
-    if (b == 0)
-        return 1;
-    ll res = binpow(a, b / 2);
-    res*=res;
-    if (b % 2)
-        return res * a;
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
+const int N = 2e5+1;
+int up[18][N],p[N],l[N],mx[N];
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,m,q,x,y;
+    cin>>n>>m>>q;
+    int a[n+1];
+    for (int i=1;i<=n;++i)
+    {
+        cin>>a[i];
+        p[a[i]]=i;
+    }
+    a[0]=a[n];
+    for (int i=1;i<=m;++i)
+    {
+        cin>>x;
+        up[0][i]=l[a[p[x]-1]];
+        for (int j=1;j<18;++j)
+            up[j][i]=up[j-1][up[j-1][i]];
+        y=i;
+        for (int j=0;j<18;++j)
+            if ((n-1)&(1<<j))
+                y=up[j][y];
+        mx[i]=max(mx[i-1],y);
+        l[x]=i;
+    }
+    while (q--)
+    {
+        cin>>x>>y;
+        if (mx[y]<x)
+            cout<<0;
+        else
+            cout<<1;
+    }
     return 0;
 }

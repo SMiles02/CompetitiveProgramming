@@ -39,7 +39,17 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    ll rd,x,y,l,r,m;
+    cin>>rd>>x>>y;
+    l=1;r=1e6;
+    while (l<r)
+    {
+        m=l+(r-l)/2;
+        if (rd*m<sqrt((double)(x*x+y*y)))
+            l=m+1;
+        else
+            r=m;
+    }
+    cout<<l;
     return 0;
 }

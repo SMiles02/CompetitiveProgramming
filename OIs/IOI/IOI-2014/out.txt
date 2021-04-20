@@ -1,1 +1,12 @@
-18
+it was 1
+1
+it was 2
+0
+it was 1
+1
+it was 3
+0
+it was 2
+0
+it was 1
+1
