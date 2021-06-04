@@ -1,59 +1,72 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-const int maxn = 1e5 + 7;
-int ans[maxn];
-vector<int> e1[maxn], e2[maxn];
-bitset<maxn> done;
+const int N = 5e4+3;
+int cur, gp[N], sz[N], to[N];
+vector<int> e1[N], e2[N], e3[N];
 stack<int> s;
+set<int> exist[N];
+bitset<N> d1,d2;
 
-void dfs1(int c) //first dfs with regular edges
+void dfs1(int c)
 {
-    done[c]=1;
+    d1[c]=1;
     for (int i : e1[c])
-        if (!done[i])
+        if (!d1[i])
             dfs1(i);
     s.push(c);
 }
 
-void dfs2(int c, int k) //second dfs with reversed edges
+void dfs2(int c, int g)
 {
-    done[c]=1;
-    ans[c]=k; //vertice c is in SCC k
+    gp[c]=g;
+    ++sz[g];
+    d2[c]=1;
     for (int i : e2[c])
-        if (!done[i])
-            dfs2(i,k);
+        if (!d2[i])
+            dfs2(i,g);
 }
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,m,u,v,k=0;
+    int n,m,x,y;
     cin>>n>>m;
     while (m--)
     {
-        cin>>u>>v;
-        e1[u].push_back(v);
-        e2[v].push_back(u);
+        cin>>x>>y;
+        e1[x].push_back(y);
+        e2[y].push_back(x);
     }
     for (int i=1;i<=n;++i)
-        if (!done[i])
+        if (!d1[i])
             dfs1(i);
-    done.reset();
     while (!s.empty())
     {
-        if (done[s.top()])
-        {
-            s.pop();
-            continue;
-        }
-        dfs2(s.top(),++k);
+        x=s.top();
         s.pop();
+        if (!d2[x])
+            dfs2(x,++cur);
     }
-    cout<<k<<"\n";
     for (int i=1;i<=n;++i)
-        cout<<ans[i]<<" ";
+        for (int j : e1[i])
+            if (gp[i]!=gp[j]&&exist[gp[i]].count(gp[j])==0)
+            {
+                e3[gp[i]].push_back(gp[j]);
+                exist[gp[i]].insert(gp[j]);
+                ++to[gp[j]];
+            }
+    //toposort
+    for (int i=1;i<=cur;++i)
+        if (to[i]==0)
+            s.push(i);
+    while (!s.empty())
+    {
+        x=s.top();
+        s.pop();
+        for (int i : e3[x])
+            if (--to[i]==0)
+                s.push(i);
+    }
     return 0;
 }

@@ -1,3 +1,6 @@
+// bad testcases meant this got 90
+// but it's right
+
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
