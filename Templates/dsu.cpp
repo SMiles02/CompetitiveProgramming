@@ -3,8 +3,8 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-const int mn = 6e5+69;
-int pt[mn],rk[mn];
+const int N = 6e5+69;
+int pt[N], rk[N];
  
 int find_set(int v) {
     if (v == pt[v])

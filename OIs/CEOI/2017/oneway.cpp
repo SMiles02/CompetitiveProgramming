@@ -1,132 +1,155 @@
 #include <bits/stdc++.h>
 using namespace std;
- 
-const int N = 1e5+3, K = 5, L = __lg(N*K)+2;
-int n, edgeList[N][2], tin[N], low[N], t, p[N][2], cur, dp[N*K], P[N*K];
-vector<int> bct[N*K];
+
+const int N = 1e5+1, L = 19;
+int n, tin[N*4], tout[N*4], low[N], t, up[20][N*4], dp[N*4][2];
 vector<array<int,2>> e[N];
-map<array<int,2>,int> mp;
-string ans(N, 'B');
-bitset<N> d1, d2, ap;
-bitset<N*K> d3;
+vector<int> bctE[N*4];
+bitset<N*4> d1, d2, d3, d4;
 set<int> s[N];
- 
-void dfs(int c, int pt, int pi)
+map<int,int> eN[N];
+string ans = "B";
+
+void dfs(int c, int p, int k)
 {
-    p[c][0]=pt;
-    p[c][1]=pi;
     d1[c]=1;
     tin[c]=low[c]=++t;
-    vector<int> v;
     for (auto i : e[c])
-        if (i[1]!=pi)
+        if (i[1]!=p)
         {
             if (d1[i[0]])
                 low[c]=min(low[c],tin[i[0]]);
             else
             {
-                dfs(i[0],c,i[1]);
+                dfs(i[0],i[1],k);
                 low[c]=min(low[c],low[i[0]]);
-                if (pt==0)
-                    v.push_back(i[0]);
-                else if (tin[c]<=low[i[0]])
+                if (tin[c]<low[i[0]])
                 {
-                    ap[c]=1;
                     s[c].insert(i[0]);
+                    s[i[0]].insert(c);
                 }
             }
         }
-    if (pt==0&&v.size()>1)
-    {
-        ap[c]=1;
-        for (int i : v)
-            if (tin[c]<low[i])
-                s[c].insert(i);
-    }
 }
- 
-void buildBCT(int c, int gp)
+
+void build(int c, int g)
 {
-    bct[c].push_back(gp);
-    bct[gp].push_back(c);
     d2[c]=1;
+    bctE[c].push_back(g);
+    bctE[g].push_back(c);
     for (auto i : e[c])
         if (!d2[i[0]])
         {
-            if (ap[c]&&s[c].count(i[0]))
+            if (s[c].count(i[0]))
             {
-                ++cur;
-                bct[c].push_back(cur);
-                bct[cur].push_back(c);
-                buildBCT(i[0],cur);
+                bctE[c].push_back(i[0]);
+                bctE[i[0]].push_back(c);
+                build(i[0],++t);
             }
             else
-                buildBCT(i[0],gp);
+                build(i[0],g);
         }
 }
- 
-void dfsAns(int c, int pt)
+
+void bctDfs(int c, int p)
 {
-    //cout<<c<<": "<<pt<<"\n";
     d3[c]=1;
-    P[c]=pt;
-    for (int i : bct[c])
-        if (!d3[i])
+    up[0][c]=p;
+    for (int i=1;i<L;++i)
+        up[i][c]=up[i-1][up[i-1][c]];
+    tin[c]=++t;
+    for (int i : bctE[c])
+        if (i!=p)
+            bctDfs(i,c);
+    tout[c]=++t;
+}
+
+bool isAncestor(int x, int y)
+{
+    if (tin[x]<=tin[y]&&tout[y]<=tout[x])
+        return 1;
+    return 0;
+}
+
+int lca(int x, int y)
+{
+    if (isAncestor(x,y))
+        return x;
+    if (isAncestor(y,x))
+        return y;
+    for (int i=L-1;i>=0;--i)
+        if (!isAncestor(up[i][x],y))
+            x=up[i][x];
+    return up[0][x];
+}
+
+void ansDfs(int c, int p)
+{
+    d4[c]=1;
+    for (int i : bctE[c])
+        if (i!=p)
         {
-            dfsAns(i,c);
-            dp[c]+=dp[i];
+            ansDfs(i,c);
+            dp[c][0]+=dp[i][0];
+            dp[c][1]+=dp[i][1];
         }
-    //cout<<c<<": "<<dp[c]<<"\n";
-    if (c>n||bct[pt].size()>2)
-        return;
-    int i = mp[{c,P[pt]}];
-    if (dp[c]>0)
+    if (c<=n&&p<=n)
     {
-        if (c==edgeList[i][0])
-            ans[i]='R';
-        else
-            ans[i]='L';
-    }
-    else if (dp[c]<0)
-    {
-        if (c==edgeList[i][0])
-            ans[i]='L';
-        else
-            ans[i]='R';
+        if (dp[c][0])
+        {
+            if (eN[c][p])
+                ans[eN[c][p]]='R';
+            else
+                ans[eN[p][c]]='L';
+        }
+        else if (dp[c][1])
+        {
+            if (eN[c][p])
+                ans[eN[c][p]]='L';
+            else
+                ans[eN[p][c]]='R';
+        }
     }
 }
- 
+  
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int m,x,y,q;
+    int m,q,x,y,z;
     cin>>n>>m;
     for (int i=1;i<=m;++i)
     {
+        ans+='B';
         cin>>x>>y;
-        mp[{x,y}]=mp[{y,x}]=i;
-        edgeList[i][0]=x;
-        edgeList[i][1]=y;
+        eN[x][y]=i;
         e[x].push_back({y,i});
         e[y].push_back({x,i});
     }
-    cur=n;
     for (int i=1;i<=n;++i)
         if (!d1[i])
-        {
-            dfs(i,0,0);
-            buildBCT(i,++cur);
-        }
+            dfs(i,-1,i);
+    t=n;
+    for (int i=1;i<=n;++i)
+        if (!d2[i])
+            build(i,++t);
+    t=0;
+    for (int i=1;i<=n;++i)
+        if (!d3[i])
+            bctDfs(i,0);
+    tout[0]=++t;
     cin>>q;
     while (q--)
     {
         cin>>x>>y;
-        ++dp[x];
-        --dp[y];
+        z=lca(x,y);
+        ++dp[x][0];
+        ++dp[y][1];
+        --dp[z][0];
+        --dp[z][1];
     }
     for (int i=1;i<=n;++i)
-        if (!d3[i])
-            dfsAns(i,0);
+        if (!d4[i])
+            ansDfs(i,0);
     for (int i=1;i<=m;++i)
         cout<<ans[i];
     return 0;
