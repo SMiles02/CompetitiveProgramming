@@ -8,18 +8,14 @@ int fd(string s, char c)
             return i;
 }
 
-void solve()
+string solve()
 {
     string s;
     cin>>s;
-    bool ok = 1;
     int e=fd(s,'e'),z=fd(s,'z'),p=fd(s,'p'),c=fd(s,'c');
     if (c<z||c<p||p<z||c<e)
-        ok=0;
-    if (ok)
-        cout<<"YES\n";
-    else
-        cout<<"NO\n";
+        return "NO\n";
+    return "YES\n";
 }
   
 int main()
@@ -28,6 +24,6 @@ int main()
     int n;
     cin>>n;
     while (n--)
-        solve();
+        cout<<solve();
     return 0;
 }
