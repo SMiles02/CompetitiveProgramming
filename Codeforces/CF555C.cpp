@@ -1,67 +1,78 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
+struct implicit
 {
-    ll res = 1;
-    while (b > 0)
+    struct node
     {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
+        int x = 0;
+        node *l, *r;
+    };
+    deque<node> buffer;
+    node *newnode()
+    {
+        buffer.emplace_back();
+        return &buffer.back();
     }
-    return res;
-}
-
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
+    int n;
+    node *root;
+    implicit(int n) : n(n) {root=newnode();}
+    void update(node *&v, int l, int r, int qL, int qR, int x)
+    {
+        if (qR<l||r<qL)
+            return;
+        if (!v)
+            v=newnode();
+        if (qL<=l&&r<=qR)
+        {
+            v->x=max(v->x,x);
+            return;
+        }
+        update(v->l,l,l+(r-l)/2,qL,qR,x);
+        update(v->r,l+(r-l)/2+1,r,qL,qR,x);
+    }
+    void update(int l, int r, int x)
+    {
+        if (l<=r)
+            update(root,1,n,l,r,x);
+    }
+    int query(node *v, int l, int r, int x)
+    {
+        if (x<l||r<x||!v)
+            return 0;
+        if (l==r)
+            return v->x;
+        return max({v->x,query(v->l,l,l+(r-l)/2,x),query(v->r,l+(r-l)/2+1,r,x)});
+    }
+    int query(int x)
+    {
+        return query(root,1,n,x);
+    }
+};
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,q,x,y,ans;
+    int n,q,x,y,z,ans;
     cin>>n>>q;
     char c;
-    set<int,greater<int>> a,b;
-    set<array<int,2>> s;
-    a.insert(0);
-    b.insert(0);
+    implicit a(n),b(n);
     while (q--)
     {
         cin>>x>>y>>c;
-        if (s.count({x,y}))
-            ans=0;
-        else if (c=='L')
+        if (c=='L')
         {
-            ans=x-*b.upper_bound(x);
-            a.insert(y);
-            s.insert({x,y});
+            z=b.query(y);
+            ans=x-z;
+            a.update(z+1,x,y);
+            b.update(y,y,x);
         }
         else
         {
-            ans=y-*a.upper_bound(y);
-            b.insert(x);
-            s.insert({x,y});
+            z=a.query(x);
+            ans=y-z;
+            a.update(x,x,y);
+            b.update(z+1,y,x);
         }
         cout<<ans<<"\n";
     }

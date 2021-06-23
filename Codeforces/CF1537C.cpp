@@ -38,13 +38,24 @@ string to_lower(string a)
 
 void solve()
 {
-    int n,k;
-    cin>>n>>k;
+    int n,x,y=1e9+4;
+    cin>>n;
     int a[n];
     for (int i=0;i<n;++i)
         cin>>a[i];
     sort(a,a+n);
-    cout<<a[n-1]-a[0]<<"\n";
+    for (int i=0;i+1<n;++i)
+        if (a[i+1]-a[i]<y)
+        {
+            y=a[i+1]-a[i];
+            x=i;
+        }
+    cout<<a[x]<<" ";
+    for (int i=x+2;i<n;++i)
+        cout<<a[i]<<" ";
+    for (int i=0;i<x;++i)
+        cout<<a[i]<<" ";
+    cout<<a[x+1]<<"\n";
 }
   
 int main()

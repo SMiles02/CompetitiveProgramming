@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int N = 2e5+1, L = 20;
+const int N = 2e5+1, L = 20; // L = log2(N)+3
 int n, cmp[N], tin[N*4], tout[N*4], low[N], t, up[20][N*4];
 vector<array<int,2>> e[N];
 vector<int> bctE[N*4];

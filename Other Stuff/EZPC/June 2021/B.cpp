@@ -1,12 +1,11 @@
 #include <bits/stdc++.h>
-#define ll long long
 using namespace std;
 
 const int N = 1005;
 int n,m;
 bitset<N> done[N];
 string s[N];
-ll ans;
+long long ans;
 
 bool ok(int x, int y)
 {
