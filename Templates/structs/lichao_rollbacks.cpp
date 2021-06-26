@@ -19,6 +19,9 @@ struct LiChao
     ll n;
     node *root;
     deque<node> buffer;
+    vector<int> prvSz;
+    vector<node*> stk1;
+    vector<array<ll,2>> stk2;
     node *newnode()
     {
         buffer.emplace_back();
@@ -27,14 +30,17 @@ struct LiChao
     LiChao(ll n) : n(n)
     {
         root = newnode();
+        prvSz.push_back(0);
     }
     void update(node *&v, ll l, ll r, ll a, ll b)
     {
         if (!v)
         {
-            v = newnode();
+            v=newnode();
             swap(a,v->a);
             swap(b,v->b);
+            stk1.push_back(v);
+            stk2.push_back({a,b});
             return;
         }
         ll m=l+(r-l)/2;
@@ -42,6 +48,8 @@ struct LiChao
         {
             swap(a,v->a);
             swap(b,v->b);
+            stk1.push_back(v);
+            stk2.push_back({a,b});
         }
         if (l==r)
             return;
@@ -53,6 +61,7 @@ struct LiChao
     void update(ll a, ll b)
     {
         update(root,0,n,a,b);
+        prvSz.push_back(stk1.size());
     }
     ll query(node *v, ll l, ll r, ll x)
     {
@@ -69,25 +78,37 @@ struct LiChao
     {
         return min(query(root,0,n,x),0LL);
     }
+    void rollback()
+    {
+        prvSz.pop_back();
+        while ((int)stk1.size()>prvSz.back())
+        {
+            stk1.back()->a = stk2.back()[0];
+            stk1.back()->b = stk2.back()[1];
+            stk1.pop_back();
+            stk2.pop_back();
+        }
+    }
 };
-
-ll dp[1<<20];
 
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
-    ll C, k;
-    cin>>n>>C;
-    LiChao lct(1e6);
-    cin>>k;
-    lct.update(-2*k, k*k);
-    for (int i=2;i<=n;++i)
-    {
-        cin>>k;
-        dp[i]=C+k*k+lct.query(k);
-        lct.update(-2*k, k*k + dp[i]);
-    }
-    cout<<dp[n];
+    cin>>n;
+
+    // Li Chao Tree for finding minimum score.
+    
+    // LiChao lct(1e9);
+    // LiChaoTree covering 0..1e9
+
+    // lct.query(69)
+    // Querying best line at x = 69
+
+    // lct.update(a, b);
+    // Adds the line ax+b to LCT
+
+    // lct.rollback();
+    // Rolls back last update
     return 0;
 }

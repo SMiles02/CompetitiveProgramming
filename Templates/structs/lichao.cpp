@@ -32,7 +32,7 @@ struct LiChao
     {
         if (!v)
         {
-            v = newnode();
+            v=newnode();
             swap(a,v->a);
             swap(b,v->b);
             return;
@@ -71,23 +71,22 @@ struct LiChao
     }
 };
 
-ll dp[1<<20];
-
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
-    ll C, k;
-    cin>>n>>C;
-    LiChao lct(1e6);
-    cin>>k;
-    lct.update(-2*k, k*k);
-    for (int i=2;i<=n;++i)
-    {
-        cin>>k;
-        dp[i]=C+k*k+lct.query(k);
-        lct.update(-2*k, k*k + dp[i]);
-    }
-    cout<<dp[n];
+    cin>>n;
+
+    // Li Chao Tree for finding minimum score.
+
+    // LiChao lct(1e9);
+    // LiChaoTree covering 0..1e9
+
+    // lct.query(69)
+    // Querying best line at x = 69
+
+    // lct.update(a, b);
+    // Adds the line ax+b to LCT
+
     return 0;
 }
