@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+//oops i started but idt i can solve rn
+
 const int N = 5e4+3;
-int cur, scc[N], sz[N], to[N];
+int cur, scc[N], sz[N], to[N], tin[N];
 vector<int> e1[N], e2[N], sccE[N];
-stack<int> s;
 set<int> exist[N];
 bitset<N> d1,d2;
 
@@ -60,13 +61,5 @@ int main()
     for (int i=1;i<=cur;++i)
         if (to[i]==0)
             s.push(i);
-    while (!s.empty())
-    {
-        x=s.top();
-        s.pop();
-        for (int i : sccE[x])
-            if (--to[i]==0)
-                s.push(i);
-    }
     return 0;
 }
