@@ -35,35 +35,38 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
-
-int fd(string s, char c)
-{
-    for (int i=0;i<26;++i)
-        if (s[i]==c)
-            return i;
-    return 69;
-}
-
-void solve()
-{
-    string s;
-    cin>>s;
-    bool ok = 1;
-    int e=fd(s,'e'),z=fd(s,'z'),p=fd(s,'p'),c=fd(s,'c');
-    if (c<z||c<p||p<z||c<e)
-        ok=0;
-    if (ok)
-        cout<<"YES\n";
-    else
-        cout<<"NO\n";
-}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
+    int n,k;
     cin>>n;
-    while (n--)
-        solve();
+    vector<int> v;
+    for (int i=0;i<n;++i)
+    {
+        cin>>k;
+        v.push_back(k);
+    }
+    sort(v.begin(), v.end());
+    if (v[n-1]>=v[n-2]+v[n-3])
+    {
+        cout<<"NO";
+        return 0;
+    }
+    cout<<"YES\n";
+    deque<int> ans;
+    ans.push_back(v.back());
+    v.pop_back();
+    ans.push_back(v.back());
+    v.pop_back();
+    ans.push_front(v.back());
+    v.pop_back();
+    while (!v.empty())
+    {
+        ans.push_back(v.back());
+        v.pop_back();
+    }
+    for (int i : ans)
+        cout<<i<<" ";
     return 0;
 }

@@ -35,29 +35,21 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
-
-bool isPrime(int n)
-{
-    for (int i=2;i*i<=n;++i)
-        if (n%i==0)
-            return 0;
-    return 1;
-}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
+    int n,x,ct=0;
     cin>>n;
-    for (int i=2;i<=1000;++i)
-        if (isPrime(i))
-            for (int j=2;j<=1000;++j)
-                if (isPrime(j)&&isPrime(i+j))
-                    for (int k=2;k<=1000;++k)
-                        if (isPrime(k)&&isPrime(i+j+k)&&isPrime(j+k))
-                        {
-                            cout<<i<<" "<<j<<" "<<k<<"\n";
-                        }
-    cout<<"donezo\n";
+    while (n)
+    {
+        x=sqrt(n);
+        ++ct;
+        if (x*x==n)
+            n-=x;
+        else
+            n-=(x+1);
+    }
+    cout<<ct;
     return 0;
 }

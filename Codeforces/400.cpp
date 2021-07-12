@@ -35,46 +35,20 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
-
-int a[301];
-
-void solve()
-{
-    ll n,d,x;
-    cin>>n>>d;
-    x=n/2;
-    if (d>x*x*2)
-    {
-        cout<<"NO\n";
-        return;
-    }
-    cout<<"YES\n";
-    if (n&1)
-    {
-        a[1]=n;
-        for (int i=1;i<=(n+1)/2;++i)
-            a[i+n/2]=i;
-        for (int i=(n+1)/2+1;i<n;++i)
-            a[i-n/2]=i;
-    }
-    else
-    {
-        for (int i=1;i<=n/2;++i)
-            a[i+n/2]=i;
-        for (int i=n/2+1;i<=n;++i)
-            a[i-n/2]=i;
-    }
-    for (int i=1;i<=n;++i)
-        for (int j=1;j<=n;++j)
-            cout<<i<<" "<<j<<" "<<a[i]<<" "<<a[j]<<"\n";
-}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
+    int n,x,y;
     cin>>n;
-    while (n--)
-        solve();
+    ll a=0,b=0;
+    for (int j=0;j<2;++j)
+        for (int i=0;i<n;++i)
+        {
+            cin>>x>>y;
+            a+=x;
+            b+=y;
+        }
+    cout<<a/n<<" "<<b/n<<"\n";
     return 0;
 }

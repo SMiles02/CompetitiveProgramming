@@ -1,88 +1,49 @@
 #include <bits/stdc++.h>
 #define ll long long
+#define sz(x) (int)(x).size()
 using namespace std;
+//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+//uniform_int_distribution<int>(1000,10000)(rng)
 
-const int N = 1005;
-int n,m;
-bitset<N> done[N];
-string s[N];
-ll ans;
-
-bool ok(int x, int y)
+ll binpow(ll a, ll b)
 {
-    if (0<=x&&0<=y&&x<n&&y<m&&!done[x][y])
-        return 1;
-    return 0;
+    ll res = 1;
+    while (b > 0)
+    {
+        if (b & 1)
+            res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
 }
 
-void dfs(int x, int y, int z)
+ll gcd(ll a,ll b)
 {
-    done[x][y]=1;
-    int X,Y;
-    if (s[x][y]=='v'&&ok(x+1,y))
-    {
-        X=x+1;
-        Y=y;
-        if (s[X][Y]=='^')
-        {
-            ans+=z;
-            --z;
-            s[X][Y]='v';
-        }
-        if (s[X][Y]=='v')
-            dfs(X,Y,z+1);
-    }
-    if (s[x][y]=='^'&&ok(x-1,y))
-    {
-        X=x-1;
-        Y=y;
-        if (s[X][Y]=='v')
-        {
-            ans+=z;
-            --z;
-            s[X][Y]='^';
-        }
-        if (s[X][Y]=='^')
-            dfs(X,Y,z+1);
-    }
-    if (s[x][y]=='>'&&ok(x,y+1))
-    {
-        X=x;
-        Y=y+1;
-        if (s[X][Y]=='<')
-        {
-            ans+=z;
-            --z;
-            s[X][Y]='>';
-        }
-        if (s[X][Y]=='>')
-            dfs(X,Y,z+1);
-    }
-    if (s[x][y]=='<'&&ok(x,y-1))
-    {
-        X=x;
-        Y=y-1;
-        if (s[X][Y]=='>')
-        {
-            ans+=z;
-            --z;
-            s[X][Y]='<';
-        }
-        if (s[X][Y]=='<')
-            dfs(X,Y,z+1);
-    }
+    if (b==0) return a;
+    return gcd(b,a%b);
+}
+
+string to_upper(string a)
+{
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
+    return a;
+}
+ 
+string to_lower(string a)
+{
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
+    return a;
 }
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    cin>>n>>m;
-    for (int i=0;i<n;++i)
-        cin>>s[i];
-    for (int i=0;i<n;++i)
-        for (int j=0;j<m;++j)
-            if (!done[i][j]&&(s[i][j]=='v'||s[i][j]=='>'))
-                dfs(i,j,1);
-    cout<<ans;
+    int l,r;
+    cin>>l>>r;
+    if (l==r)
+        cout<<l;
+    else
+        cout<<2;
     return 0;
 }
