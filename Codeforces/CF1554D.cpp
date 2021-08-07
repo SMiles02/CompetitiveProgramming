@@ -37,11 +37,39 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
+
+int dp[1001][3];
+
+void solve()
+{
+    int n;
+    cin>>n;
+}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
+    int n,cur;
+    cur=0;
+    for (int i=1;i<1001;++i)
+    {
+        cur+=i;
+        dp[i][0]=i;
+        dp[i][1]=(i*(i+1))/2;
+        if (i&1)
+        {
+            --dp[i][0];
+            --dp[i][1];
+        }
+        if (i==1)
+            dp[i][0]=dp[i][1]=1;
+        dp[i][2]=dp[i][0]+dp[i][1]-1;
+        // for (int j=0;j<3;++j)
+        //     cout<<dp[i][j]<<" ";
+        // cout<<"\n";
+    }
     cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

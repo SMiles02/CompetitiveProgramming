@@ -37,11 +37,32 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
+
+void solve()
+{
+    int W,H,w,h,x1,y1,x2,y2;
+    cin>>W>>H;
+    cin>>x1>>y1>>x2>>y2;
+    cin>>w>>h;
+    int ans = 1e9;
+    if (w<=x1||h<=y1||x2+w<=W||y2+h<=H)
+        ans=0;
+    if (w+x2-x1<=W)
+        ans=min({ans,abs(w-x1),abs(x2-W+w)});
+    if (h+y2-y1<=H)
+        ans=min({ans,abs(h-y1),abs(y2-H+h)});
+    if (ans==1e9)
+        cout<<"-1\n";
+    else
+        cout<<ans<<"\n";
+}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
     cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

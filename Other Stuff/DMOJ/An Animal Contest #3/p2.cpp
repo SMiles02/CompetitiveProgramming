@@ -41,7 +41,39 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int k,d,x;
+    cin>>k>>d;
+    set<int> s;
+    priority_queue<int,vector<int>,greater<int>> pq;
+    while (d--)
+    {
+        cin>>x;
+        if (!s.count(x))
+            pq.push(x);
+    }
+    x=pq.top();
+    pq.pop();
+    if (x)
+    {
+        while (k--)
+            cout<<x;
+        cout<<"\n";
+        return 0;
+    }
+    if (!sz(pq))
+    {
+        cout<<"-1\n";
+        return 0;
+    }
+    x=pq.top();
+    if (k==1)
+    {
+        cout<<x<<"\n";
+        return 0;
+    }
+    cout<<x;
+    for (int i=0;i<k-2;++i)
+        cout<<0;
+    cout<<x<<"\n";
     return 0;
 }

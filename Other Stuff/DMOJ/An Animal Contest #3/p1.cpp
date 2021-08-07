@@ -41,7 +41,19 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int a,b,c,d;
+    cin>>a>>b>>c>>d;
+    if (a<b)
+    {
+        if (c<d)
+            cout<<"Go to the department store";
+        else
+            cout<<"Go to the grocery store";
+    }
+    else if (c<d)
+        cout<<"Go to the pharmacy";
+    else
+        cout<<"Stay home";
+    cout<<"\n";
     return 0;
 }

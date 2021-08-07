@@ -37,11 +37,38 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
+
+const int N = 3e3;
+int n, a[N], b[N];
+
+bool check(int x)
+{
+    map<int,int> m;
+    for (int i=0;i<n;++i)
+        ++m[b[i]];
+    for (int i=0;i<n;++i)
+        if (--m[a[i]^x]<0)
+            return 0;
+    return 1;
+}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
     cin>>n;
+    for (int i=0;i<n;++i)
+        cin>>a[i];
+    for (int i=0;i<n;++i)
+        cin>>b[i];
+    set<int> s;
+    vector<int> ans;
+    for (int i=0;i<n;++i)
+        s.insert(a[0]^b[i]);
+    for (int i : s)
+        if (check(i))
+            ans.push_back(i);
+    cout<<sz(ans)<<"\n";
+    for (int i : ans)
+        cout<<i<<"\n";
     return 0;
 }

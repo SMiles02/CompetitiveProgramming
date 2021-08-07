@@ -37,11 +37,54 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
+
+const int N = 5005, MOD = 998244353;
+vector<int> e[N];
+int dp[N][N];
+
+int add(int a, int b)
+{
+    a+=b;
+    while (a>=MOD)
+        a-=MOD;
+    return a;
+}
+
+int sub(int a, int b)
+{
+    //cerr<<a<<" "<<b<<" = "<<add(add(a,0),MOD-b)<<"\n";
+    return add(a,MOD-b);
+}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,m,k,x,y,s;
+    cin>>n>>m>>k;
+    while (m--)
+    {
+        cin>>x>>y;
+        e[x].push_back(y);
+        e[y].push_back(x);
+    }
+    dp[0][1]=1;
+    for (int i=1;i<=k;++i)
+    {
+        s=0;
+        for (int j=1;j<=n;++j)
+        {
+            s=add(s,dp[i-1][j]);
+            //cout<<dp[i-1][j]<<" ";
+        }
+        //cout<<s<<"!\n";
+        for (int j=1;j<=n;++j)
+        {
+            dp[i][j]=sub(s,dp[i-1][j]);
+            for (int v : e[j])
+                dp[i][j]=sub(dp[i][j],dp[i-1][v]);
+            //cout<<i<<" "<<j<<": "<<dp[i][j]<<"\n";
+        }
+    }
+    cout<<dp[k][1];
     return 0;
 }

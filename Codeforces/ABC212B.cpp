@@ -41,7 +41,25 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int a[4];
+    for (int i=0;i<4;++i)
+    {
+        char c;
+        cin>>c;
+        a[i]=(c-'0');
+    }
+    set<int> s;
+    bool ok=1;
+    s.insert(a[0]);
+    for (int i=1;i<4;++i)
+    {
+        if ((a[i-1]+1)%10!=a[i])
+            ok=0;
+        s.insert(a[i]);
+    }
+    if (sz(s)==1||ok)
+        cout<<"Weak";
+    else
+        cout<<"Strong";
     return 0;
 }

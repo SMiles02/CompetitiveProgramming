@@ -1,5 +1,3 @@
-//#pragma GCC optimize("Ofast,unroll-loops")
-//#pragma GCC target("avx,avx2,sse,sse2")
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
@@ -37,6 +35,9 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
+
+const int N = 1e6+7;
+array<int,2> a[N];
   
 int main()
 {

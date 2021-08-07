@@ -2,12 +2,12 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-
+ 
 const int N = 1005;
 int mt[N];
 vector<int> e[N];
 bitset<N> done;
-
+ 
 bool try_kuhn(int c)
 {
     if (done[c])
@@ -33,16 +33,16 @@ int main()
         e[x].push_back(n+y);
         e[n+y].push_back(x);
     }
-    for (int i=1;i<=n+m;++i)
+    for (int i=1;i<=n;++i)
     {
         done.reset();
         try_kuhn(i);
     }
-    for (int i=1;i<=n;++i)
+    for (int i=n+1;i<=n+m;++i)
         ans+=(mt[i]!=0);
     cout<<ans<<"\n";
-    for (int i=1;i<=n;++i)
+    for (int i=n+1;i<=n+m;++i)
         if (mt[i])
-            cout<<i<<" "<<mt[i]-n<<"\n";
+            cout<<mt[i]<<" "<<i-n<<"\n";
     return 0;
 }

@@ -1,5 +1,5 @@
-//#pragma GCC optimize("Ofast,unroll-loops")
-//#pragma GCC target("avx,avx2,sse,sse2")
+#pragma GCC optimize("Ofast,unroll-loops")
+#pragma GCC target("avx,avx2,sse,sse2")
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
@@ -42,6 +42,21 @@ int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
+    ll A,B,ans=0;
     cin>>n;
+    ll a[n][2];
+    for (int i=0;i<n;++i)
+        for (int j=0;j<2;++j)
+            cin>>a[i][j];
+    for (int i=0;i<n;++i)
+        for (int j=i+1;j<n;++j)
+            for (int k=j+1;k<n;++k)
+            {
+                A = abs(a[i][0]*(a[j][1]-a[j][2])+a[i][1]*(a[j][2]-a[j][0])+a[i][2]*(a[j][0]-a[j][1]));
+                B = gcd(abs(a[i][0]-a[j][0]),abs(a[i][1]-a[j][1])) + gcd(abs(a[i][0]-a[k][0]),abs(a[i][1]-a[k][1])) + gcd(abs(a[k][0]-a[j][0]),abs(a[k][1]-a[j][1]));
+                if (((A-B)/2-1)&1)
+                    ++ans;
+            }
+    cout<<ans;
     return 0;
 }

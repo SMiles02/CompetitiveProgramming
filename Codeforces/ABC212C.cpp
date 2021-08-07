@@ -41,7 +41,24 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,m,x,ans=1e9;
+    cin>>n>>m;
+    set<int> s;
+    set<int,greater<int>> t;
+    while (n--)
+    {
+        cin>>x;
+        s.insert(x);
+        t.insert(x);
+    }
+    while (m--)
+    {
+        cin>>x;
+        if (s.lower_bound(x)!=s.end())
+            ans=min(ans,abs(*(s.lower_bound(x))-x));
+        if (t.lower_bound(x)!=t.end())
+            ans=min(ans,abs(*(t.lower_bound(x))-x));
+    }
+    cout<<ans;
     return 0;
 }

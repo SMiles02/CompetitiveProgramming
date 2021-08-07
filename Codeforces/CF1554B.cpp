@@ -37,11 +37,27 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
+
+void solve()
+{
+    int n,k;
+    cin>>n>>k;
+    ll ans=-1e18;
+    int a[n+1];
+    for (int i=1;i<=n;++i)
+        cin>>a[i];
+    for (int i=max(1,n-1000);i<=n;++i)
+        for (int j=i+1;j<=n;++j)
+            ans=max(ans,1LL*i*j-1LL*k*(a[i]|a[j]));
+    cout<<ans<<"\n";
+}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
     cin>>n;
+    while (n--)
+        solve();
     return 0;
 }

@@ -41,7 +41,13 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,m;
+    cin>>n>>m;
+    if (n==0)
+        cout<<"Silver";
+    else if (m==0)
+        cout<<"Gold";
+    else
+        cout<<"Alloy";
     return 0;
 }

@@ -41,7 +41,27 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,m,k,ans=0;
+    cin>>n>>m;
+    multiset<int> s;
+    for (int i=1;i<=n;++i)
+    {
+        cin>>k;
+        if (k==-1)
+            continue;
+        s.insert(i-k);
+    }
+    for (int i=1;i<=m;++i)
+    {
+        cin>>k;
+        if (k==-1)
+            continue;
+        if (s.find(i-k)!=s.end())
+        {
+            ++ans;
+            s.erase(s.find(i-k));
+        }
+    }
+    cout<<ans<<"\n";
     return 0;
 }

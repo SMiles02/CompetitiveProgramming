@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
+#define int ll
 using namespace std;
 //mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 //uniform_int_distribution<int>(1000,10000)(rng)
@@ -38,40 +39,58 @@ string to_lower(string a)
     return a;
 }
 
-const int X = 6;
-int n=6;
-bitset<10> ans[10];
-
-void solve(int k, vector<int> v)
+void solve()
 {
-    int ct=0;
+    int n,l,r,ans,x;
+    cin>>n>>l>>r;
+    int a[n],b[n];
+    b[0]=0;
     for (int i=0;i<n;++i)
-        ct+=(v[i]!=i);
-    ans[k][ct]=1;
-    if (k==min((n+1)/2,X))
-        return;
-    for (int i=0;i<n;++i)
-        for (int j=i+1;j<n;++j)
+        cin>>a[i];
+    sort(a,a+n,greater<int>());
+    ans=a[0];
+    x=a[0];
+    for (int i=1;i<n;++i)
+    {
+        b[i]=b[i-1]+l;
+        if (x<=b[i])
         {
-            swap(v[i],v[j]);
-            solve(k+1, v);
-            swap(v[i],v[j]);
+            ans+=a[i];
+            x=b[i]+a[i];
         }
+        else
+        {
+            ans+=max(b[i]+a[i]-x,0LL);
+            x=max(x,b[i]+a[i]);
+        }
+    }
+    cout<<ans<<" ";
+    sort(a,a+n);
+    ans=a[0];
+    x=a[0];
+    for (int i=1;i<n;++i)
+    {
+        b[i]=b[i-1]+r;
+        if (x<=b[i])
+        {
+            ans+=a[i];
+            x=b[i]+a[i];
+        }
+        else
+        {
+            ans+=max(b[i]+a[i]-x,0LL);
+            x=max(x,b[i]+a[i]);
+        }
+    }
+    cout<<ans<<"\n";
 }
   
-int main()
+signed main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    vector<int> v(n);
-    iota(v.begin(), v.end(), 0);
-    solve(0, v);
-    for (int i=0;i<=min((n+1)/2,X);++i)
-    {
-        cout<<i<<": ";
-        for (int j=0;j<=n;++j)
-            if (ans[i][j])
-                cout<<j<<" ";
-        cout<<"\n";
-    }
+    int tc;
+    cin>>tc;
+    while (tc--)
+        solve();
     return 0;
 }

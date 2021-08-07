@@ -41,7 +41,19 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,m,q,l,r;
+    cin>>n>>m>>q>>l>>r;
+    if (q>max(n,m))
+        cout<<"-1\n";
+    else
+    {
+        cout<<q<<"\n";
+        if (n>=q)
+            for (int i=1;i<=q;++i)
+                cout<<i<<" 1\n";
+        else
+            for (int i=1;i<=q;++i)
+                cout<<1<<" "<<i<<"\n";
+    }
     return 0;
 }

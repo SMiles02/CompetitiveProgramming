@@ -7,14 +7,22 @@ using namespace std;
 //mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 //uniform_int_distribution<int>(1000,10000)(rng)
 
+const int MOD = 998244353;
+
+int mul(int a, int b)
+{
+    return (1LL*a*b)%MOD;
+}
+
 ll binpow(ll a, ll b)
 {
+    //cout<<a<<" ^ "<<b<<"\n";
     ll res = 1;
     while (b > 0)
     {
         if (b & 1)
-            res = res * a;
-        a = a * a;
+            res = mul(res, a);
+        a = mul(a, a);
         b >>= 1;
     }
     return res;
@@ -41,7 +49,29 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
+    int n,k,ans=1,opt;
+    cin>>n>>k;
+    opt=k;
+    vector<pair<int,char>> v(k+2);
+    for (int i=1;i<=k;++i)
+    {
+        cin>>v[i].second>>v[i].first;
+        if (v[i].second=='L')
+            --opt;
+    }
+    v[0]={0 ,'X'};
+    v[k+1]={n+1, 'X'};
+    sort(v.begin(), v.end());
+    for (int i=1;i<=k+1;++i)
+    {
+        ans=mul(ans,binpow(opt,v[i].first-v[i-1].first-1));
+        //cout<<v[i].first<<" "<<v[i].second<<"\n";
+        if (v[i].second=='L')
+            ++opt;
+        else if (v[i].second=='R')
+            --opt;
+        //cout<<"opt: "<<opt<<"\n";
+    }
+    cout<<ans;
     return 0;
 }

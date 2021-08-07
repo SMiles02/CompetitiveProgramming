@@ -41,7 +41,33 @@ string to_lower(string a)
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
+    int n,x,y;
     cin>>n;
+    int a[n],b[n];
+    for (int i=0;i<n;++i)
+        cin>>b[i];
+    sort(b,b+n);
+    x=0;y=n-1;
+    for (int i=0;i<n;++i)
+    {
+        if (i&1)
+            a[i]=b[y--];
+        else
+            a[i]=b[x++];
+    }
+    cout<<a[0];
+    for (int i=1;i<n;++i)
+        cout<<" "<<a[i];
+    cout<<"\n";
+    for (int i=0;i<n;++i)
+    {
+        if (i&1)
+            cout<<"S";
+        else if (i+1<n)
+            cout<<"B";
+        else
+            cout<<"E";
+    }
+    cout<<"\n";
     return 0;
 }
