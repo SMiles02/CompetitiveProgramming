@@ -3,8 +3,8 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-const int mn = 2e5+7, INF = 1e9+7;
-int segTree[mn<<2];
+const int N = 2e5+7, INF = 1e9+7;
+int segTree[N<<2];
 
 void build(int i, int l, int r)
 {

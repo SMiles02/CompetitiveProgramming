@@ -3,14 +3,14 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-const int MAXN = 2e5+1, lg = 19; //maximum number of nodes;
-int up[MAXN][lg]; //change 19 to log2(MAXN)+2
-vector<int> edges[MAXN];
+const int N = 2e5+1, L = 19; //maximum number of nodes;
+int up[N][L]; //change 19 to log2(MAXN)+2
+vector<int> edges[N];
 
 void dfs(int c, int p)
 {
     up[c][0] = p;
-    for (int i=1;i<lg;++i)
+    for (int i=1;i<L;++i)
         up[c][i] = up[up[c][i-1]][i-1];
     for (int i : edges[c])
         if (i != p)
@@ -19,7 +19,7 @@ void dfs(int c, int p)
 
 int lift(int x, int y) //find the y-th ancestor of x
 {
-    for (int i=0;i<lg;++i)
+    for (int i=0;i<L;++i)
         if ((1<<i)&y)
         {
             x=up[x][i];

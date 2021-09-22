@@ -7,11 +7,11 @@
 #define s second
 using namespace std;
 
-const int maxn = 2e5+7;
+const int N = 2e5+7;
 const ll INF = 1e18;
 int n,m,x;
-vector<pii> edges[maxn];
-ll dist[maxn],y;
+vector<pii> edges[N];
+ll dist[N],y;
 
 void dijkstra(int src)
 {

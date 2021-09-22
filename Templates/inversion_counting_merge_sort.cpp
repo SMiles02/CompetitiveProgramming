@@ -3,8 +3,10 @@
 #define sz(x) (int)(x).size()
 using namespace std;
  
-const int maxn = 3e5+7;
-int n,a[maxn],b[maxn],c[maxn];
+const int N = 3e5+7;
+int n,a[N],b[N],c[N];
+
+// b is the array that will be checked (will also be sorted after checking)
  
 ll find_inversions(int l, int r)
 {

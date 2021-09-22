@@ -13,8 +13,7 @@ int find_set(int v) {
 }
  
 void make_set(int v) {
-    for (int i=1;i<=v;++i)
-    {
+    for (int i=1;i<=v;++i) {
         pt[i] = i;
         rk[i] = 1;
     }
