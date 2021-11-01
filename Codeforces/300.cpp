@@ -1,3 +1,5 @@
+//#pragma GCC optimize("Ofast,unroll-loops")
+//#pragma GCC target("avx,avx2,sse,sse2")
 #include <bits/stdc++.h>
 #define ll long long
 #define sz(x) (int)(x).size()
@@ -35,38 +37,20 @@ string to_lower(string a)
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
+
+void solve()
+{
+    int a,b,c;
+    cin>>a>>b>>c;
+    cout<<((a+b*2+c*3)%2)<<"\n";
+}
   
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,k;
-    cin>>n;
-    vector<int> v;
-    for (int i=0;i<n;++i)
-    {
-        cin>>k;
-        v.push_back(k);
-    }
-    sort(v.begin(), v.end());
-    if (v[n-1]>=v[n-2]+v[n-3])
-    {
-        cout<<"NO";
-        return 0;
-    }
-    cout<<"YES\n";
-    deque<int> ans;
-    ans.push_back(v.back());
-    v.pop_back();
-    ans.push_back(v.back());
-    v.pop_back();
-    ans.push_front(v.back());
-    v.pop_back();
-    while (!v.empty())
-    {
-        ans.push_back(v.back());
-        v.pop_back();
-    }
-    for (int i : ans)
-        cout<<i<<" ";
+    int t;
+    cin>>t;
+    while (t--)
+        solve();
     return 0;
 }

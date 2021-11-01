@@ -4,26 +4,24 @@
 using namespace std;
 
 const int N = 2e5+1, L = 19; //maximum number of nodes;
-int time, up[N][L], tin[N], tout[N]; //change 19 to log2(N)+2
-vector<int> edges[N];
+int timer, up[N][L], tin[N], tout[N]; //change 19 to log2(N)+2
+vector<int> e[N];
 
 void dfs(int c, int p)
 {
-    tin[c]=++time;
+    tin[c]=++timer;
     up[c][0] = p;
     for (int i=1;i<L;++i)
         up[c][i] = up[up[c][i-1]][i-1];
-    for (int i : edges[c])
+    for (int i : e[c])
         if (i != p)
             dfs(i,c);
-    tout[c]=++time;
+    tout[c]=++timer;
 }
 
 bool isAncestor(int p, int c) //checking if p is an ancestor of c
 {
-    if (tin[p]<=tin[c]&&tout[c]<=tout[p])
-        return 1;
-    return 0;
+    return (tin[p]<=tin[c]&&tout[c]<=tout[p]);
 }
 
 int lca(int u, int v)
@@ -45,6 +43,6 @@ int main()
     cin>>n;
     //get nodes/edges stuff
     dfs(1,0);
-    tout[0]=++time;
+    tout[0]=++timer;
     return 0;
 }

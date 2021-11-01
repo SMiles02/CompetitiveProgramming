@@ -11,9 +11,7 @@ struct BIT {
         for (int i=x;i;i-=i&-i) rtn+=bit[i];
         return rtn;
     }
-    int query(int x, int y) {
-        return query(y) - query(x-1);
-    }
+    int query(int x, int y) { return query(y) - query(x-1); }
 };
 
 int main()

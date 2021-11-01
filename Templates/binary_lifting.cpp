@@ -5,14 +5,14 @@ using namespace std;
 
 const int N = 2e5+1, L = 19; //maximum number of nodes;
 int up[N][L]; //change 19 to log2(MAXN)+2
-vector<int> edges[N];
+vector<int> e[N];
 
 void dfs(int c, int p)
 {
     up[c][0] = p;
     for (int i=1;i<L;++i)
         up[c][i] = up[up[c][i-1]][i-1];
-    for (int i : edges[c])
+    for (int i : e[c])
         if (i != p)
             dfs(i,c);
 }

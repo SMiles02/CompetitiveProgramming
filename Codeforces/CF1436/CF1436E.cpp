@@ -1,86 +1,80 @@
-#pragma GCC optimize("Ofast,unroll-loops")
-#pragma GCC target("avx,avx2,sse,sse2")
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-const int maxn=1e5+1;
-vector<int> pos[maxn];
-int n,x,l,r,m;
-
-bool inRange(int k, int L, int R)
-{
-    if (pos[k].empty())
-        return 0;
-    l=0;r=sz(pos[k])-1;
-    while (l<r)
-    {
-        m=l+((r-l)>>1);
-        //cout<<l<<" "<<r<<" "<<m<<"\n";
-        if (pos[k][m]<L)
-            l=m+1;
+template<class T> struct Segtree {
+    // merge(ID,x) = x
+    // range [0,n]
+    const T ID = 1e9;
+    int n;
+    vector<T> v;
+    Segtree(int n) : n(n), v(n*4+4, 0) {}
+    T merge(T a, T b) { return min(a,b); }
+    void update(int i, int l, int r, int j, T x) {
+        if (j<l||r<j)
+            return;
+        if (l==r) {
+            v[i]=x;
+            return;
+        }
+        int m=l+(r-l)/2;
+        if (j<=m)
+            update(i*2+1,l,m,j,x);
         else
-            r=m;
+            update(i*2+2,m+1,r,j,x);
+        v[i]=merge(v[i*2+1],v[i*2+2]);
     }
-    if (L<=pos[k][l]&&pos[k][l]<=R)
-        return 1;
-    return 0;
-}
-
-bool hasAll(int L, int R, int k)
-{
-    if (R<L)
-        return 0;
-    if (R-L+1<k)
-        return 0;
-    for (int i=1;i<=k;++i)
-        if (!inRange(i,L,R))
-            return 0;
-    return 1;
-}
-
-bool isntPresent(int k)
-{
-    x=pos[k].size();
-    if (x==0)
-    {
-        if (hasAll(0,n-1,k-1))
-            return 0;
-        return 1;
+    void update(int i, T x) { update(0,0,n,i,x); }
+    T query(int i, int l, int r, int qL, int qR) {
+        if (r<qL||qR<l)
+            return ID;
+        if (qL<=l&&r<=qR)
+            return v[i];
+        int m=l+(r-l)/2;
+        return merge(query(i*2+1,l,m,qL,qR),query(i*2+2,m+1,r,qL,qR));
     }
-    for (int i=1;i<x;++i)
-        if (hasAll(pos[k][i-1],pos[k][i],k-1))
-            return 0;
-    if (hasAll(0,pos[k][0],k-1))
-        return 0;
-    if (hasAll(pos[k][x-1],n-1,k-1))
-        return 0;
-    return 1;
-}
+    T query(int l, int r) { return query(0,0,n,l,r); }
+};
 
+const int N = 1e5+4;
+int last[N], a[N];
+vector<array<int,2>> q[N];
+bitset<N> ok;
+  
 int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int k;
+    int n;
     cin>>n;
-    for (int i=0;i<n;++i)
+    bool allOne=1;
+    Segtree<int> st(n+1);
+    st.update(0,n+1);
+    for (int i=1;i<=n;++i)
     {
-        cin>>k;
-        pos[k].push_back(i);
+        cin>>a[i];
+        allOne&=(a[i]==1);
+        q[i].push_back({last[a[i]]+1,a[i]});
+        last[a[i]]=i;
     }
-    if (sz(pos[1])==n)
+    if (allOne)
     {
         cout<<1;
         return 0;
     }
-    for (int i=2;i;++i)
+    for (int i=1;i<=n+1;++i)
+        q[n+2].push_back({last[i]+1,i});
+    for (int i=1;i<=n+2;++i)
     {
-        if (isntPresent(i))
+        if (i<=n)
+            st.update(a[i],i);
+        for (auto j : q[i])
+            if (j[0]<=st.query(0,j[1]-1))
+                ok[j[1]]=1;
+    }
+    for (int i=1;i<=n+2;++i)
+        if (!ok[i])
         {
             cout<<i;
             return 0;
         }
-    }
     return 0;
 }
