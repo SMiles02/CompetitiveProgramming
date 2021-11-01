@@ -7,8 +7,7 @@ const int N = 6e5+69;
 int pt[N], rk[N];
  
 int find_set(int v) {
-    if (v == pt[v])
-        return v;
+    if (v == pt[v]) return v;
     return pt[v] = find_set(pt[v]);
 }
  
@@ -23,8 +22,7 @@ void unite(int a, int b) {
     a = find_set(a);
     b = find_set(b);
     if (a != b) {
-        if (rk[a] < rk[b])
-            swap(a, b);
+        if (rk[a] < rk[b]) swap(a, b);
         pt[b] = a;
         rk[a] += rk[b];
     }
