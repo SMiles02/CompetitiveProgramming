@@ -3,28 +3,26 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-const int N = 2e5+1, L = 19; //maximum number of nodes;
-int up[N][L]; //change 19 to log2(MAXN)+2
+// N = maximum number of nodes
+// L = log2(N) + 2
+const int N = 2e5+1, L = 19;
+int up[N][L];
 vector<int> e[N];
 
-void dfs(int c, int p)
-{
+void dfs(int c, int p) {
     up[c][0] = p;
-    for (int i=1;i<L;++i)
+    for (int i = 1; i < L; ++i)
         up[c][i] = up[up[c][i-1]][i-1];
     for (int i : e[c])
         if (i != p)
-            dfs(i,c);
+            dfs(i, c);
 }
 
-int lift(int x, int y) //find the y-th ancestor of x
-{
-    for (int i=0;i<L;++i)
-        if ((1<<i)&y)
-        {
-            x=up[x][i];
-            y-=(1<<i);
-        }
+//find the y-th ancestor of x
+int lift(int x, int y) {
+    for (int i = 0; i < L; ++i)
+        if ((1<<i) & y)
+            x = up[x][i];
     return x;
 }
 

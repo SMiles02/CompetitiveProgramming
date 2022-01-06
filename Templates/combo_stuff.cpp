@@ -1,8 +1,10 @@
 #include <bits/stdc++.h>
+#define ll long long
+#define sz(x) (int)(x).size()
 using namespace std;
 
 //998244353
-const int MOD = , N = 2e5+1;
+const int MOD = 1e9+7, N = 2e5+1;
 int f[N];
 
 int add(int a, int b) {

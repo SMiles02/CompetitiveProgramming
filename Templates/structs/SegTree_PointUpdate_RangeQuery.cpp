@@ -1,10 +1,11 @@
-template<class T> struct Segtree {
-    // merge(ID,x) = x
+template<class T> struct segtree {
     // range [0,n]
+
+    // merge(ID,x) = x
     const T ID = 0;
     int n;
     vector<T> v;
-    Segtree(int n) : n(n), v(n*4+4, ID) {}
+    segtree(int n) : n(n), v(n*4+4, ID) {}
     T merge(T a, T b) { return max(a,b); }
     void update(int i, int l, int r, int j, T x) {
         if (j<l||r<j)
