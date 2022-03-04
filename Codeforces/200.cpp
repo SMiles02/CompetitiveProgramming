@@ -1,49 +1,28 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
-{
-    ll res = 1;
-    while (b > 0)
-    {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
-    }
-    return res;
+const int N = 1000;
+int n, m;
+string s[N];
+vector<int> dx = {0, 0, -1, 1};
+vector<int> dy = {-1, 1, 0, 0};
+
+bool ok(int x, int y) {
+    return (0 <= x && x < n && 0 <= y && y < m);
 }
 
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
+void dfs(int x, int y, char c, char d) {
+    s[x][y] = d;
+    for (int i = 0; i < 4; ++i)
+        if (ok(x + dx, y + dy) && s[x + dx][y + dy] == c)
+            dfs(x + dx, y + dy, c, d);
 }
+];
 
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
-  
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int l,r;
-    cin>>l>>r;
-    if (l==r)
-        cout<<l;
-    else
-        cout<<2;
+    cin >> n >> m;
+    for (int i = 0; i < n; ++i)
+        cin >> s[i    dfs(0, 0, s[0][0], 'z');
     return 0;
 }

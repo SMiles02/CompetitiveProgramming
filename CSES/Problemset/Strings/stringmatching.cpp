@@ -1,86 +1,84 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-int mod=1000026653;
+const int MOD = 1e9+7;
 
-ll binpow(ll a, ll b) {
-    if (b == 0)
-        return 1;
-    ll res = binpow(a, b / 2);
-    res*=res;
-    res%=mod;
-    if (b % 2)
-        return (res*a)%mod;
+int getRand(int l, int r) {
+    return uniform_int_distribution<int>(l, r)(rng);
+}
+
+int add(int a, int b) {
+    a+=b;
+    if (a>=MOD) a-=MOD;
+    return a;
+}
+
+int mul(int a, int b) { return (1LL*a*b)%MOD; }
+
+int binpow(int a, int b) {
+    int res = 1;
+    while (b > 0) {
+        if (b & 1) res = mul(res,a);
+        a = mul(a,a);
+        b >>= 1;
+    }
     return res;
 }
 
-ll subt(ll a, ll b)
-{
-    if (a<b)
-        return a+mod-b;
-    return a-b;
-}
+int sub(int a, int b) { return add(a,MOD-b); }
 
-ll p1[1000001];
-ll p2[1000001];
-ll im1[1000001];
-ll im2[1000001];
-
-int main()
+struct Hash
 {
+    // All 1-indexed
+    int baseCnt, maxLen, cur = 0;
+    vector<vector<int>> bases, inverse;
+    vector<vector<vector<int>>> hashVal;
+    Hash(int baseCnt, int maxLen) : baseCnt(baseCnt), maxLen(maxLen), bases(baseCnt, vector<int>(maxLen + 1)), inverse(baseCnt, vector<int>(maxLen + 1)) {
+        for (int i = 0; i < baseCnt; ++i) {
+            bases[i][0] = 1;
+            bases[i][1] = getRand(10000, 200000);
+            inverse[i][0] = 1;
+            inverse[i][1] = binpow(bases[i][1], MOD - 2);
+            for (int j = 2; j <= maxLen; ++j) {
+                bases[i][j] = mul(bases[i][j - 1], bases[i][1]);
+                inverse[i][j] = mul(inverse[i][j - 1], inverse[i][1]);
+            }
+        }
+        hashVal.push_back({{}});
+    }
+    void addString(string& s) {
+        int n = s.size();
+        ++cur;
+        hashVal.push_back(vector<vector<int>>(baseCnt, vector<int>(n + 1)));
+        for (int i = 0; i < baseCnt; ++i)
+            for (int j = 0; j < n; ++j)
+                hashVal[cur][i][j + 1] = add(hashVal[cur][i][j], mul(bases[i][j], s[j] - 'a' + 1));
+    }
+    int calcVal(int id, int base, int l, int r) {
+        return mul(sub(hashVal[id][base][r], hashVal[id][base][l - 1]), inverse[base][l - 1]);
+    }
+    bool isEqual(int id1, int l1, int r1, int id2, int l2, int r2) {
+        for (int i = 0; i < baseCnt; ++i)
+            if (calcVal(id1, i, l1, r1) != calcVal(id2, i, l2, r2))
+                return false;
+        return true;
+    }
+};
+
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-    p1[0]=1;
-    p2[0]=1;
-    vector<int> primes = {7994669,9458311,8950873,9535627,7676621,9660349,9924487,9444557,9558361,7559323,9971641,8053921,9962171,9562321,9112091,8062757,8397859,7986317,7243937,9020707};
-    p1[1]=primes[uniform_int_distribution<int>(1,20)(rng)-1];
-    p2[1]=primes[uniform_int_distribution<int>(1,20)(rng)-1];
-    while (p2[1]==p1[1])
-        p2[1]=primes[uniform_int_distribution<int>(1,20)(rng)-1];
-    im1[0]=1;im2[0]=1;
-    im1[1]=binpow(p1[1],mod-2);
-    im2[1]=binpow(p2[1],mod-2);
-    for (int i=2;i<1000001;++i)
-    {
-        p1[i]=p1[i-1]*p1[1];
-        p1[i]%=mod;
-        p2[i]=p2[i-1]*p2[1];
-        p2[i]%=mod;
-        im1[i]=im1[i-1]*im1[1];
-        im1[i]%=mod;
-        im2[i]=im2[i-1]*im2[1];
-        im2[i]%=mod;
-    }
-    int n,m,ans=0;
-    ll sc1=0,sc2=0;
-    string s,t;
-    cin>>s;
-    cin>>t;
-    n=sz(s);m=sz(t);
-    for (int i=0;i<m;++i)
-    {
-        sc1+=((t[i]-'a'+1)*p1[i]);
-        sc1%=mod;
-        sc2+=((t[i]-'a'+1)*p2[i]);
-        sc2%=mod;
-    }
-    ll h1[n+1];
-    ll h2[n+1];
-    h1[0]=0;
-    h2[0]=0;
-    for (int i=1;i<=n;++i)
-    {
-        h1[i]=h1[i-1]+((s[i-1]-'a'+1)*p1[i-1]);
-        h1[i]%=mod;
-        h2[i]=h2[i-1]+((s[i-1]-'a'+1)*p2[i-1]);
-        h2[i]%=mod;
-    }
-    for (int i=m;i<=n;++i)
-        if ((subt(h1[i],h1[i-m])*im1[i-m])%mod==sc1)
-            if ((subt(h2[i],h2[i-m])*im2[i-m])%mod==sc2)
-                ++ans;
-    cout<<ans;
+    Hash hash(3, 1e6);
+    int ans = 0, n, m;
+    string s, t;
+    cin >> s;
+    cin >> t;
+    n = s.size();
+    m = t.size();
+    hash.addString(s);
+    hash.addString(t);
+    for (int i = m; i <= n; ++i)
+        ans += hash.isEqual(1, i - m + 1, i, 2, 1, m);
+    cout << ans;
     return 0;
 }
