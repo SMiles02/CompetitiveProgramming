@@ -1,11 +1,7 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-// All credit goes to yosupo and the 
-// rest of the AtCoder Library team
-// for this code!
+// Taken from ACL
 
 constexpr long long safe_mod(long long x, long long m) {
     x %= m;
@@ -106,11 +102,3 @@ std::pair<long long, long long> crt(const std::vector<long long>& r,
 // y is the minimum solution, y+zn is any solution
 
 // lcm(m_i) must fit in ll
-
-int main()
-{
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    return 0;
-}

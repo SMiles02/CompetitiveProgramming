@@ -1,0 +1,11 @@
+7
+ab??aba
+8
+a
+b
+ab
+abc
+abcd
+abcde
+abcdef
+abcdefg

@@ -1,24 +1,52 @@
 #include <bits/stdc++.h>
+#define ll long long
+#define sz(x) (int)(x).size()
 using namespace std;
+//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+//uniform_int_distribution<int>(1000,10000)(rng)
 
-int main() {
-    // n <= 2 * 10^5
-    // 10^9 ops / sec
-    int n, k;
-    cin >> n;
-    bool exists[n + 1];
-    // if exists[i] = true
-    // then i is in a
-    for (int i = 1; i <= n; ++i) // O(n)
-        exists[i] = false;
-    int a[n - 1];
-    for (int i = 0; i < n - 1; ++i) { // O(n)
-        cin >> a[i];
-        exists[a[i]] = true;
+ll binpow(ll a, ll b) {
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a;
+        a = a * a;
+        b >>= 1;
     }
-    for (int i = 1; i <= n; ++i) // O(n)
-        if (exists[i] == false)
-            cout << i;
+    return res;
+}
+
+ll gcd(ll a, ll b) {
+    if (b == 0) return a;
+    return gcd(b, a % b);
+}
+
+string to_upper(string a) {
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
+    return a;
+}
+ 
+string to_lower(string a) {
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
+    return a;
+}
+
+void solve() {
+    int a, b, c, d, e, f;
+    cin >> a >> b >> c >> d;
+    e = max(a, c);
+    f = min(b, d);
+    if (e <= f)
+        cout << min(a + c, e) << "\n";
+    else
+        cout << a + c << "\n";
+}
+  
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int t;
+    cin >> t;
+    while (t--)
+        solve();
     return 0;
 }
-// overall O(n)

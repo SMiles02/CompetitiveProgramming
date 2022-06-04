@@ -30,7 +30,7 @@ int main()
 {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n;
-    cin>>n;
+    cin >> n;
     //get nodes/edges stuff
     dfs(1,0);
     return 0;
