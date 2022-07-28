@@ -42,7 +42,7 @@ struct Dijkstra {
         }
         return d;
     }
-    vector<T> multisourc_shortest_path(vector<int> src) {
+    vector<T> multisource_shortest_path(vector<int> src) {
         vector<T> d(n + 1, INF);
         priority_queue<next_shortest> pq;
         for (int i : src) {
