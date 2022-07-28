@@ -3,7 +3,7 @@
 #define sz(x) (int)(x).size()
 using namespace std;
 
-//998244353
+// 998244353
 const int MOD = 1e9+7, N = 2e5+1;
 int f[N];
 

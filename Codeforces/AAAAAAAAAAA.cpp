@@ -2,42 +2,30 @@
 #define ll long long
 #define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-ll binpow(ll a, ll b) {
-    ll res = 1;
-    while (b > 0) {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
-    }
-    return res;
-}
+const int N = 1e6, M = 5e5;
+int w[N + 1];
 
-ll gcd(ll a, ll b) {
-    if (b == 0) return a;
-    return gcd(b, a % b);
-}
-
-string to_upper(string a) {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
-
-string to_lower(string a) {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
+int get_rand(int l, int r) {
+    return uniform_int_distribution<int>(l, r)(rng);
 }
 
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    for (int i = 1; i < 10; ++i)
-        for (int j = 1; j < 10; ++j)
-            for (int k = 1; k < 10; ++k)
-                for (int l = 1; l < 10; ++l)
-                    if (i + j == k * l && i * j == k + l)
-                        cout << i << " " << j << " " << k << " " << l << "\n";
+    cout << N << " " << M << "\n";
+    vector<int> v(N);
+    iota(v.begin(), v.end(), 1);
+    shuffle(v.begin(), v.end(), rng);
+    for (int i = 0; i < M; ++i)
+        ++w[v[i * 2 + get_rand(0, 1)]];
+    for (int i = 1; i <= N; ++i) {
+        if (w[i] == 0)
+            w[i] += get_rand(2, 3);
+        cout << w[i] << " ";
+    }
+    cout << "\n";
+    for (int i = 0; i < M; ++i)
+        cout << v[i * 2] << " " << v[i * 2 + 1] << "\n";
     return 0;
 }

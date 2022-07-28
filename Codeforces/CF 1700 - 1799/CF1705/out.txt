@@ -1,0 +1,10 @@
+TFF
+1
+FTF
+1
+FTT
+2
+TTT
+1
+FFT
+3
