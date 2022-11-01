@@ -1,68 +1,59 @@
 #include <bits/stdc++.h>
+#define ll long long
+#define sz(x) (int)(x).size()
 using namespace std;
+//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+//uniform_int_distribution<int>(1000,10000)(rng)
 
-const int N = 1e5;
-vector<int> from[N];
-int to[N];
+ll binpow(ll a, ll b) {
+    ll res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a;
+        a = a * a;
+        b >>= 1;
+    }
+    return res;
+}
 
-void addEdge(int x, int y) {
-    from[x].push_back(y);
-    ++to[y];
+ll gcd(ll a, ll b) {
+    if (b == 0) return a;
+    return gcd(b, a % b);
+}
+
+string to_upper(string a) {
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
+    return a;
+}
+
+string to_lower(string a) {
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
+    return a;
 }
 
 void solve() {
-    int n, oC = 0, x, done = 0;
+    int n, x, ok = 0;
     cin >> n;
     deque<int> d;
     for (int i = 0; i < n; ++i) {
-        from[i].clear();
-        to[i] = 0;
-    }
-    for (int i = 0; i < n; ++i) {
         cin >> x;
+        ok += (x == 1);
         d.push_back(x);
-        if (x == 1)
-            ++oC;
     }
-    if (oC != 1) {
+    if (ok != 1) {
         cout << "NO\n";
         return;
     }
-    while (d.front() != 1) {
-        d.push_back(d.front());
-        d.pop_front();
+    while (d[0] != 1) {
+        d.push_front(d.back());
+        d.pop_back();
     }
-    vector<int> v = {0}, w;
-    for (int i = 1; i < n; ++i) {
-        x = d[i];
-        if (x > v.size() + 1) {
+    for (int i = 1; i < n; ++i)
+        if (!(1 < d[i] && d[i] < d[i - 1] + 2)) {
             cout << "NO\n";
             return;
         }
-        if (x <= v.size()) {
-            while (x < v.size())
-                v.pop_back();
-            addEdge(i, v.back());
-            v.pop_back();
-        }
-        addEdge(v.back(), i);
-        v.push_back(i);
-    }
-    for (int i = 0; i < n; ++i)
-        if (to[i] == 0)
-            w.push_back(i);
-    while (!w.empty()) {
-        x = w.back();
-        w.pop_back();
-        ++done;
-        for (int i : from[x])
-            if (--to[i] == 0)
-                w.push_back(i);
-    }
-    if (done == n)
-        cout << "YES\n";
-    else
-        cout << "NO\n";
+    cout << "YES\n";
 }
 
 int main() {

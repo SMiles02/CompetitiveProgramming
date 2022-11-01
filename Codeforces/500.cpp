@@ -25,59 +25,36 @@ string to_upper(string a) {
     for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
     return a;
 }
- 
+
 string to_lower(string a) {
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
 
-void solve() {
-    int n, x, y;
-    cin >> n;
-    string s[2];
-    cin >> s[0];
-    cin >> s[1];
-    int dp[2][n];
-    x = 0;
-    y = n - 1;
-    while (s[0][x] == '.' && s[1][x] == '.')
-        ++x;
-    while (s[0][y] == '.' && s[1][y] == '.')
-        --y;
-    if (s[0][x] == '*' && s[1][x] == '*')
-        dp[0][x] = dp[1][x] = 1;
-    else if (s[0][x] == '*') {
-        dp[0][x] = 0;
-        dp[1][x] = 1;
-    }
-    else {
-        dp[0][x] = 1;
-        dp[1][x] = 0;
-    }
-    for (int i = x + 1; i <= y; ++i) {
-        if (s[0][i] == '*' && s[1][i] == '*')
-            dp[0][i] = dp[1][i] = min(dp[0][i - 1], dp[1][i - 1]) + 2;
-        else if (s[0][i] == '*') {
-            dp[0][i] = min(dp[0][i - 1] + 1, dp[1][i - 1] + 2);
-            dp[1][i] = min(dp[0][i - 1], dp[1][i - 1]) + 2;
-        }
-        else if (s[1][i] == '*') {
-            dp[1][i] = min(dp[1][i - 1] + 1, dp[0][i - 1] + 2);
-            dp[0][i] = min(dp[1][i - 1], dp[0][i - 1]) + 2;
-        }
-        else {
-            dp[0][i] = dp[0][i - 1] + 1;
-            dp[1][i] = dp[1][i - 1] + 1;
-        }
-    }
-    cout << min(dp[0][y], dp[1][y]) << "\n";
-}
-  
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int t;
-    cin >> t;
-    while (t--)
-        solve();
+    string s;
+    cin >> s;
+    int n = s.size(), ans = 1e9, cur, q;
+    bool flag;
+    for (int i = 0; i < (1 << n); ++i) {
+        cur = 0;
+        flag = false;
+        for (int j = 0; j < n; ++j)
+            if (((1 << j) & i)) {
+                if (cur == 0 && s[j] == '0')
+                    flag = true;
+                cur *= 10;
+                cur += (s[j] - '0');
+            }
+        q = sqrt(cur);
+        if (q * q == cur && !flag && cur > 0) {
+            // cout << i << " " << cur << " " << n - __builtin_popcount(i) << "\n";
+            ans = min(ans, n - __builtin_popcount(i));
+        }
+    }
+    if (ans == 1e9)
+        ans = -1;
+    cout << ans;
     return 0;
 }

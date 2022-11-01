@@ -36,8 +36,7 @@ void calc_factorials() {
     for (int i=1;i<N;++i) f[i]=mul(f[i-1],i);
 }
   
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
     return 0;
 }

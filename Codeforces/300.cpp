@@ -25,60 +25,15 @@ string to_upper(string a) {
     for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
     return a;
 }
- 
+
 string to_lower(string a) {
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
 
-void solve() {
-    string s;
-    cin >> s;
-    int n = s.size(), z = 0, o = 0, x = 0, y = 0, mn, id = -1, ans;
-    for (auto i : s) {
-        if (i == '0')
-            ++z;
-        else
-            ++o;
-    }
-    mn = z;
-    for (int i = 0; i < n; ++i) {
-        if (s[i] == '0')
-            ++x;
-        else
-            ++y;
-        if (max(z - x, y) <= mn) {
-            mn = max(z - x, y);
-            id = i;
-        }
-    }
-    cout << id << "!\n";
-    z = 0;
-    o = 0;
-    x = 0;
-    y = 0;
-    for (int i = n - 1; i > id; --i) {
-        if (s[i] == '0')
-            ++z;
-        else
-            ++o;
-    }
-    ans = mn + z;
-    for (int i = n - 1; i > id; --i) {
-        if (s[i] == '0')
-            ++x;
-        else
-            ++y;
-        ans = min(ans, mn + min(z - x, y));
-    }
-    cout << ans << "\n";
-}
-  
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int t;
-    cin >> t;
-    while (t--)
-        solve();
+    int n;
+    cin >> n;
     return 0;
 }

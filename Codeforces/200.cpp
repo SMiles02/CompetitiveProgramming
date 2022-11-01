@@ -25,39 +25,15 @@ string to_upper(string a) {
     for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
     return a;
 }
- 
+
 string to_lower(string a) {
     for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
     return a;
 }
 
-void solve() {
-    int n, m;
-    cin >> n >> m;
-    string s[n];
-    for (int i = 0; i < n; ++i)
-        cin >> s[i];
-    for (int i = 0; i < n; ++i)
-        for (int j = 0; j < m; ++j)
-                if (s[i][j] == 'R') {
-                bool ok = true;
-                for (int k = 0; k < n; ++k)
-                    for (int l = 0; l < m; ++l)
-                        if (s[k][l] == 'R' && (k - i < 0 || l - j < 0))
-                            ok = false;
-                if (ok) {
-                    cout << "YES\n";
-                    return;
-                }
-            }
-    cout << "NO\n";
-}
-  
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int t;
-    cin >> t;
-    while (t--)
-        solve();
+    int n;
+    cin >> n;
     return 0;
 }

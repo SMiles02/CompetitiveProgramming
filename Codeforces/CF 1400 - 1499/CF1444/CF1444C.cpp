@@ -1,53 +1,79 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
-{
-    ll res = 1;
-    while (b > 0)
-    {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
+struct DSU {
+    vector<int> pt, sz;
+    vector<array<int, 2>> changes;
+    DSU(int n) : pt(n + 1), sz(n + 1, 1) {
+        for (int i = 1; i <= n; ++i)
+            pt[i] = i;
     }
-    return res;
-}
+    int find_set(int i) {
+        return i == pt[i] ? i : find_set(pt[i]);
+    }
+    bool unite(int i, int j) {
+        i = find_set(i);
+        j = find_set(j);
+        if (i != j) {
+            if (sz[i] < sz[j])
+                swap(i, j);
+            pt[j] = i;
+            sz[i] += sz[j];
+            changes.push_back({i, j});
+            return true;
+        }
+        return false;
+    }
+    bool connected(int x, int y) {
+        return find_set(x) == find_set(y);
+    }
+    void roll_back() {
+        array<int, 2> a = changes.back();
+        changes.pop_back();
+        pt[a[1]] = a[1];
+        sz[a[0]] -= sz[a[1]];
+    }
+};
 
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
-}
-
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
-
-void solve()
-{
-    int n;
-    cin>>n;
-}
-
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    while (n--)
-        solve();
+    int n, m, k, x, y, change_cnt;
+    cin >> n >> m >> k;
+    vector<int> c(n + 1);
+    vector<bool> ok(k + 1, true);
+    vector<vector<array<int, 2>>> same_group(k + 1);
+    map<array<int, 2>, vector<array<int, 2>>> diff_group;
+    DSU dsu(n * 2 + 1);
+    for (int i = 1; i <= n; ++i)
+        cin >> c[i];
+    while (m--) {
+        cin >> x >> y;
+        if (c[x] == c[y]) {
+            dsu.unite(x, y + n);
+            dsu.unite(x + n, y);
+        }
+        else
+            diff_group[{min(c[x], c[y]), max(c[x], c[y])}].push_back({x, y});
+    }
+    for (int i = 1; i <= n; ++i)
+        if (dsu.connected(i, i + n) && ok[c[i]]) {
+            ok[c[i]] = false;
+            --k;
+        }
+    long long ans = (1LL * k * (k - 1)) / 2;
+    for (auto pairings : diff_group)
+        if (ok[pairings.first[0]] && ok[pairings.first[1]]) {
+            change_cnt = 0;
+            for (auto i : pairings.second) {
+                change_cnt += dsu.unite(i[0], i[1] + n) + dsu.unite(i[0] + n, i[1]);
+                if (dsu.connected(i[0], i[0] + n)) {
+                    --ans;
+                    break;
+                }
+            }
+            while (change_cnt--)
+                dsu.roll_back();
+        }
+    cout << ans;
     return 0;
 }
