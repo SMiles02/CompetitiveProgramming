@@ -1,70 +1,60 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-int cur,tin[200001],tout[200001],binLift[200001][19],f,g;
-vector<int> children[200001];
-
-void dfs(int c)
-{
-    for (int i=1;i<19;++i)
-        binLift[c][i]=binLift[binLift[c][i-1]][i-1];
-    tin[c]=++cur;
-    for (int i : children[c])
-    {
-        binLift[i][0]=c;
-        dfs(i);
+struct LCA {
+    int N, L, timer = 0;
+    vector<int> tin, tout;
+    vector<vector<int>> up, e;
+    LCA(int n) : N(n), L((int)log2(n + 1) + 1), e(n + 1), tin(n + 1), tout(n + 1), up((int)log2(n + 1) + 1, vector<int>(n + 1)) {}
+    void add_directed_edge(int x, int y) {
+        e[x].push_back(y);
     }
-    tout[c]=++cur;
-}
+    void add_undirected_edge(int x, int y) {
+        e[x].push_back(y);
+        e[y].push_back(x);
+    }
+    void build_lca(int c, int p) {
+        up[0][c] = p;
+        for (int i = 1; i < L; ++i)
+            up[i][c] = up[i - 1][up[i - 1][c]];
+        tin[c] = ++timer;
+        for (int i : e[c])
+            build_lca(i, c);
+        tout[c] = ++timer;
+    }
+    void build_lca(int root = 1) {
+        build_lca(root, 0);
+        tout[0] = ++timer;
+    }
+    bool is_ancestor(int u, int v)  {
+        return (tin[u] <= tin[v] && tout[v] <= tout[u]);
+    }
+    int query(int u, int v)
+    {
+        if (is_ancestor(u, v))
+            return u;
+        if (is_ancestor(v, u))
+            return v;
+        for (int i = L - 1; i >= 0; --i)
+            if (!is_ancestor(up[i][u], v))
+                u = up[i][u];
+        return up[0][u];
+    }
+};
 
-bool isAncestor(int p, int c)
-{
-    if (tin[p]<=tin[c]&&tout[c]<=tout[p])
-        return 1;
-    return 0;
-}
-
-int raise(int x, int y)
-{
-    for (int i=0;i<19;++i)
-        if ((1<<i)&y)
-        {
-            x=binLift[x][i];
-            y^=(1<<i);
-        }
-    return x;
-}
-
-int lca(int u, int v)
-{
-    if (isAncestor(u,v))
-        return u;
-    if (isAncestor(v,u))
-        return v;
-    for (int i=18;i>=0;--i)
-        if (!isAncestor(binLift[u][i],v))
-            u=binLift[u][i];
-    return binLift[u][0];
-}
-
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,q;
-    cin>>n>>q;
-    for (int i=2;i<=n;++i)
-    {
-        cin>>f;
-        children[f].push_back(i);
+    int n, q, p, x, y;
+    cin >> n >> q;
+    LCA lca(n);
+    for (int i = 2; i <= n; ++i) {
+        cin >> p;
+        lca.add_directed_edge(p, i);
     }
-    dfs(1);
-    tout[0]=++cur;
-    while (q--)
-    {
-        cin>>f>>g;
-        cout<<lca(f,g)<<"\n";
+    lca.build_lca();
+    while (q--) {
+        cin >> x >> y;
+        cout << lca.query(x, y) << "\n";
     }
     return 0;
 }

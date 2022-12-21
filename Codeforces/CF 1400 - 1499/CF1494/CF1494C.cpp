@@ -1,53 +1,63 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
 
-ll binpow(ll a, ll b)
-{
-    ll res = 1;
-    while (b > 0)
-    {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
+int solve_case(deque<int> a, deque<int> b) {
+    if (a.empty())
+        return 0;
+    while (!b.empty() && b[0] < a[0])
+        b.pop_front();
+    if (b.empty())
+        return 0;
+    set<int> s;
+    for (int i : b)
+        s.insert(i);
+    int n = a.size(), right_point = 0, ans = 0, l, r, m;
+    vector<int> p(n + 1);
+    for (int i = n - 1; i >= 0; --i)
+        p[i] = p[i + 1] + s.count(a[i]);
+    for (int i = 0; i < b.size(); ++i) {
+        while (right_point + 1 < n && a[right_point + 1] <= b[i] + right_point + 1)
+            ++right_point;
+        l = i;
+        r = b.size() - 1;
+        while (l < r) {
+            m = l + (r - l) / 2 + 1;
+            if (b[i] + right_point < b[m])
+                r = m - 1;
+            else
+                l = m;
+        }
+        ans = max(ans, l - i + 1 + p[right_point + 1]);
     }
-    return res;
+    return ans;
 }
 
-ll gcd(ll a,ll b)
-{
-    if (b==0) return a;
-    return gcd(b,a%b);
+void solve() {
+    int n, m, k;
+    deque<int> a, b, c, d;
+    cin >> n >> m;
+    while (n--) {
+        cin >> k;
+        if (k < 0)
+            a.push_front(-k);
+        else
+            b.push_back(k);
+    }
+    while (m--) {
+        cin >> k;
+        if (k < 0)
+            c.push_front(-k);
+        else
+            d.push_back(k);
+    }
+    cout << solve_case(a, c) + solve_case(b, d) << "\n";
 }
 
-string to_upper(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
- 
-string to_lower(string a)
-{
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
-
-void solve()
-{
-    int n;
-    cin>>n;
-}
-
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    while (n--)
+    int t;
+    cin >> t;
+    while (t--)
         solve();
     return 0;
 }

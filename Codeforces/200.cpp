@@ -31,9 +31,16 @@ string to_lower(string a) {
     return a;
 }
 
+void solve() {
+    int n, k;
+    cin >> n;
+}
+
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin >> n;
+    int t;
+    cin >> t;
+    while (t--)
+        solve();
     return 0;
 }

@@ -1,89 +1,61 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
-#define a3 array<int,3>
 using namespace std;
 
-const int mn = 2000;
-int pt[mn],rk[mn],rt[mn];
- 
-int find_set(int v) {
-    if (v == pt[v])
-        return v;
-    return pt[v] = find_set(pt[v]);
-}
- 
-void make_set(int v) {
-    for (int i=1;i<=v;++i)
-    {
-        pt[i] = i;
-        rk[i] = 1;
-        rt[i] = i;
-    }
-}
- 
-void unite(int a, int b) {
-    a = find_set(a);
-    b = find_set(b);
-    if (a != b) {
-        if (rk[a] < rk[b])
-            swap(a, b);
-        pt[b] = a;
-        rk[a] += rk[b];
-    }
-}
+const int N = 1000;
+int n, ans[N];
+vector<array<int, 2>> e;
 
-int main()
-{
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,x,y;
-    cin>>n;
-    int a[mn],p[mn];
-    make_set(mn-5);
-    priority_queue<a3,vector<a3>,greater<a3>> pq;
-    for (int i=1;i<=n;++i)
-        for (int j=1;j<=n;++j)
-        {
-            cin>>x;
-            if (i==j)
-            {
-                a[i]=x;
-                continue;
-            }
-            pq.push({x,i,j});
-        }
-    a3 b;
-    while (!pq.empty())
-    {
-        b=pq.top();
-        pq.pop();
-        x=find_set(b[1]);
-        y=find_set(b[2]);
-        if (x==y)
-            continue;
-        if (a[rt[x]]==b[0])
-        {
-            p[rt[y]]=rt[x];
-            unite(b[1],b[2]);
-            continue;
-        }
-        if (a[rt[y]]==b[0])
-        {
-            p[rt[x]]=rt[y];
-            unite(b[1],b[2]);
-            continue;
-        }
-        p[rt[x]]=p[rt[y]]=++n;
-        unite(b[1],b[2]);
-        rt[find_set(b[1])]=n;
-        a[n]=b[0];
+struct DSU {
+    vector<int> pt;
+    DSU(int n) : pt(n + 1) {
+        for (int i = 1; i <= n; ++i)
+            pt[i] = i;
     }
-    cout<<n<<"\n";
-    for (int i=1;i<=n;++i)
-        cout<<a[i]<<" ";
-    cout<<"\n";
-    cout<<n<<"\n";
-    for (int i=1;i<n;++i)
-        cout<<i<<" "<<p[i]<<"\n";
+    int find_set(int i) {
+        return i == pt[i] ? i : pt[i] = find_set(pt[i]);
+    }
+    void unite(int i, int j, int s) {
+        i = find_set(i);
+        j = find_set(j);
+        if (max(ans[i], ans[j]) != s) {
+            pt[i] = pt[j] = ++n;
+            e.push_back({i, n});
+            e.push_back({j, n});
+            ans[n] = s;
+        }
+        else if (ans[i] > ans[j]) {
+            pt[j] = i;
+            e.push_back({j, i});
+        }
+        else if (ans[j] > ans[i]) {
+            pt[i] = j;
+            e.push_back({j, i});
+        }
+    }
+};
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int x;
+    cin >> n;
+    DSU dsu(n * 2);
+    vector<array<int, 3>> a;
+    for (int i = 1; i <= n; ++i)
+        for (int j = 1; j <= n; ++j) {
+            cin >> x;
+            if (i == j)
+                ans[i] = x;
+            else
+                a.push_back({x, i, j});
+        }
+    sort(a.begin(), a.end());
+    for (auto i : a)
+        dsu.unite(i[1], i[2], i[0]);
+    cout << n << "\n";
+    for (int i = 1; i <= n; ++i)
+        cout << ans[i] << " ";
+    cout << "\n" << n << "\n";
+    for (auto i : e)
+        cout << i[0] << " " << i[1] << "\n";
     return 0;
 }

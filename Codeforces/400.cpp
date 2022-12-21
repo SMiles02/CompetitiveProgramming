@@ -31,28 +31,24 @@ string to_lower(string a) {
     return a;
 }
 
+void solve() {
+    int n, x = 0;
+    cin >> n;
+    int a[n];
+    for (int i = 0; i < n; ++i)
+        cin >> a[i];
+    if (n & 1) {
+        for (int i = 0; i < n; ++i)
+            x ^= a[i] * ((1LL * (i + 1) * (n - i)) & 1);
+    }
+    cout << x << "\n";
+}
+
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n, x;
-    cin >> n;
-    deque<int> c, d;
-    for (int i = 0; i < n; ++i) {
-        cin >> x;
-        if (x != 0)
-            c.push_back(x);
-    }
-    for (int i = 0; i < n; ++i) {
-        cin >> x;
-        if (x != 0)
-            d.push_back(x);
-    }
-    while (c.front() != d.front()) {
-        d.push_front(d.back());
-        d.pop_back();
-    }
-    if (c == d)
-        cout << "YES\n";
-    else
-        cout << "NO\n";
+    int t;
+    cin >> t;
+    while (t--)
+        solve();
     return 0;
 }
