@@ -1,39 +1,21 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-//uniform_int_distribution<int>(1000,10000)(rng)
-
-ll binpow(ll a, ll b) {
-    ll res = 1;
-    while (b > 0) {
-        if (b & 1)
-            res = res * a;
-        a = a * a;
-        b >>= 1;
-    }
-    return res;
-}
-
-ll gcd(ll a, ll b) {
-    if (b == 0) return a;
-    return gcd(b, a % b);
-}
-
-string to_upper(string a) {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
-
-string to_lower(string a) {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
 
 void solve() {
-    int n;
-    cin >> n;
+    int n, m, k;
+    cin >> n >> m;
+    long long cur;
+    vector<array<long long, 2>> v;
+    for (int i = 0; i < n; ++i) {
+        cur = 0;
+        for (int j = 1; j <= m; ++j) {
+            cin >> k;
+            cur += 1LL * j * k;
+        }
+        v.push_back({cur, i});
+    }
+    sort(v.begin(), v.end());
+    cout << v.back()[1] + 1 << " " << v.back()[0] - v[0][0] << "\n";
 }
 
 int main() {

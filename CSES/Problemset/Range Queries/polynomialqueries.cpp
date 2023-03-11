@@ -1,97 +1,113 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-const int mn = 2e5+1;
-ll seg[mn<<2],lazy[mn<<2][2],rg[mn<<2],ans;
+// Arithmetic Progression Segtree
 
-ll f(ll x, ll y, ll z)
-{
-    return x*z+((z*(z-1))/2)*y;
-}
-
-void passDown(int i)
-{
-    lazy[2*i+1][0]+=lazy[i][0];
-    lazy[2*i+1][1]+=lazy[i][1];
-    lazy[2*i+2][0]+=lazy[i][0]+lazy[i][1]*rg[i*2+1];
-    lazy[2*i+2][1]+=lazy[i][1];
-    lazy[i][0]=0;
-    lazy[i][1]=0;
-}
-
-ll val(int i)
-{
-    return seg[i]+f(lazy[i][0],lazy[i][1],rg[i]);
-}
-
-void recalc(int i)
-{
-    seg[i]=val(i*2+1)+val(i*2+2);
-}
-
-void build(int i, int l, int r)
-{
-    rg[i]=r-l+1;
-    if (l==r)
-    {
-        cin>>seg[i];
-        return;
+template<class T> struct progression_segtree {
+    // merge(ID, x) = x
+    // range [0, n]
+    const T ID = 0;
+    int n;
+    vector<T> seg;
+    vector<array<T, 2>> lazy;
+    vector<int> range_length;
+    T cur_query_ans;
+    T merge(T a, T b) {
+        return a + b;
     }
-    build(i*2+1,l,(l+r)>>1);
-    build(i*2+2,(l+r+2)>>1,r);
-    seg[i]=seg[i*2+1]+seg[i*2+2];
-}
-
-void update(int i, int cL, int cR, int l, int r)
-{
-    if (cR<l||r<cL)
-        return;
-    if (l<=cL&&cR<=r)
-    {
-        lazy[i][0]+=cL-l+1;
-        ++lazy[i][1];
-        return;
+    void get_range_sizes(int i, int l, int r) {
+        range_length[i] = r - l + 1;
+        if (l == r)
+            return;
+        get_range_sizes(i * 2 + 1, l, l + (r - l) / 2);
+        get_range_sizes(i * 2 + 2, l + (r - l) / 2 + 1, r);
     }
-    passDown(i);
-    update(i*2+1,cL,(cL+cR)>>1,l,r);
-    update(i*2+2,(cL+cR+2)>>1,cR,l,r);
-    recalc(i);
-}
-
-void query(int i, int cL, int cR, int l, int r)
-{
-    if (cR<l||r<cL)
-        return;
-    if (l<=cL&&cR<=r)
-    {
-        ans+=val(i);
-        return;
+    progression_segtree(int n) : n(n), seg((n + 1) * 4), lazy((n + 1) * 4), range_length((n + 1) * 4) {
+        get_range_sizes(0, 0, n);
     }
-    passDown(i);
-    query(i*2+1,cL,(cL+cR)>>1,l,r);
-    query(i*2+2,(cL+cR+2)>>1,cR,l,r);
-    recalc(i);
-}
-
-int main()
-{
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,q,k,l,r;
-    cin>>n>>q;
-    build(0,1,n);
-    while (q--)
-    {
-        cin>>k>>l>>r;
-        if (k==1)
-            update(0,1,n,l,r);
-        else
-        {
-            ans=0;
-            query(0,1,n,l,r);
-            cout<<ans<<"\n";
+    T calc_progression(T start_val, T common_diff, int n) {
+        return start_val * n + ((1LL * n * (n - 1)) / 2) * common_diff;
+    }
+    T get_val(int i) {
+        return seg[i] + calc_progression(lazy[i][0], lazy[i][1], range_length[i]);
+    }
+    void pass_down(int i) {
+        lazy[i * 2 + 1][0] += lazy[i][0];
+        lazy[i * 2 + 1][1] += lazy[i][1];
+        lazy[i * 2 + 2][0] += lazy[i][0] + lazy[i][1] * range_length[i * 2 + 1];
+        lazy[i * 2 + 2][1] += lazy[i][1];
+        lazy[i][0] = 0;
+        lazy[i][1] = 0;
+    }
+    void recalculate(int i) {
+        seg[i] = merge(get_val(i * 2 + 1), get_val(i * 2 + 2));
+    }
+    void set(int i, int cl, int cr, int p, T x) {
+        if (cl == cr) {
+            seg[i] = x;
+            lazy[i][0] = lazy[i][1] = 0;
+            return;
         }
+        pass_down(i);
+        if (p <= cl + (cr - cl) / 2)
+            set(i * 2 + 1, cl, cl + (cr - cl) / 2, p, x);
+        else
+            set(i * 2 + 2, cl + (cr - cl) / 2 + 1, cr, p, x);
+        recalculate(i);
+    }
+    void set(int p, T x) {
+        set(0, 0, n, p, x);
+    }
+    void update(int i, int cl, int cr, int ql, int qr, T start_val, T common_diff) {
+        if (cr < ql || qr < cl)
+            return;
+        if (ql <= cl && cr <= qr) {
+            lazy[i][0] += start_val + common_diff * (cl - ql);
+            lazy[i][1] += common_diff;
+            return;
+        }
+        pass_down(i);
+        update(i * 2 + 1, cl, cl + (cr - cl) / 2, ql, qr, start_val, common_diff);
+        update(i * 2 + 2, cl + (cr - cl) / 2 + 1, cr, ql, qr, start_val, common_diff);
+        recalculate(i);
+    }
+    void update(int ql, int qr, T start_val, T common_diff) {
+        update(0, 0, n, ql, qr, start_val, common_diff);
+    }
+    void query(int i, int cl, int cr, int ql, int qr) {
+        if (cr < ql || qr < cl)
+            return;
+        if (ql <= cl && cr <= qr) {
+            cur_query_ans = merge(cur_query_ans, get_val(i));
+            return;
+        }
+        pass_down(i);
+        query(i * 2 + 1, cl, cl + (cr - cl) / 2, ql, qr);
+        query(i * 2 + 2, cl + (cr - cl) / 2 + 1, cr, ql, qr);
+        recalculate(i);
+    }
+    T query(int ql, int qr) {
+        cur_query_ans = ID;
+        query(0, 0, n, ql, qr);
+        return cur_query_ans;
+    }
+};
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int n, q, t, x, y;
+    cin >> n >> q;
+    progression_segtree<long long> seg(n);
+    for (int i = 1; i <= n; ++i) {
+        cin >> x;
+        seg.set(i, x);
+    }
+    while (q--) {
+        cin >> t >> x >> y;
+        if (t == 1)
+            seg.update(x, y, 1, 1);
+        else
+            cout << seg.query(x, y) << "\n";
     }
     return 0;
 }

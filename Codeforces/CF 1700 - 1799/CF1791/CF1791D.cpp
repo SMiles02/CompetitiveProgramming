@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+#define ll long long
+#define sz(x) (int)(x).size()
+using namespace std;
+// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+// uniform_int_distribution<int>(1000,10000)(rng)
+
+string to_upper(string a) {
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
+    return a;
+}
+
+string to_lower(string a) {
+    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
+    return a;
+}
+
+void solve() {
+    int n, ans = 0;
+    cin >> n;
+    string s;
+    cin >> s;
+    vector<int> v(n + 2), w(n + 2);
+    set<int> st;
+    for (int i = 0; i < n; ++i) {
+        st.insert(s[i]);
+        v[i + 1] = st.size();
+    }
+    st.clear();
+    for (int i = n - 1; i >= 0; --i) {
+        st.insert(s[i]);
+        w[i + 1] = st.size();
+    }
+    for (int i = 0; i <= n; ++i)
+        ans = max(ans, v[i] + w[i + 1]);
+    cout << ans << "\n";
+}
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int t;
+    cin >> t;
+    while (t--)
+        solve();
+    return 0;
+}

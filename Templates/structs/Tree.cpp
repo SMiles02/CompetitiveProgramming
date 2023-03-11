@@ -24,7 +24,7 @@ struct Tree {
         for (int i : e[c])
             if (i != p)
                 build_lca(i, c);
-        tout[c] = ++timer;
+        tout[c] = timer;
     }
     void build_queries(int root = 1) {
         build_lca(root, 0);

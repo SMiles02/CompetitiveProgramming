@@ -1,73 +1,26 @@
 #include <bits/stdc++.h>
-#define ll long long
 using namespace std;
 
-map<char,int> builder(string g,map<char,int> stringY)
-{
-	int z=g.length();
-	for (int i=0;i<z;++i)
-	{
-		++stringY[g[i]];
-	}
-	return stringY;
-}
-
-bool compareString(map<char,int> a, map<char,int> b)
-{
-	string alphabet="abcdefghijklmnopqrstuvwxyz";
-	for (int i=0;i<26;++i)
-	{
-		if (b[alphabet[i]]>a[alphabet[i]])
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-int main()
-{
-	ios_base::sync_with_stdio(0); cin.tie(0);
-	string s,t,adder,alpha,cur;
-	int n,m,ans;
-	ans=0;
-	cin>>s;
-	cin>>t;
-	n=s.length();
-	m=s.length();
-	alpha="abcdefghijklmnopqrstuvwxyz";
-	cur="";
-	map<char,int> occurences;
-	map<char,int> stringT;
-	for (int i=0;i<26;++i)
-	{
-		occurences[alpha[i]]=0;
-		stringT[alpha[i]]=0;
-	}
-	for (int i=0;i<m;++i)
-	{
-		++stringT[t[i]];
-	}
-	for (int i=0;i<n;++i)
-	{
-		for (int j=i+1;j<n;++j)
-		{
-			adder="";
-			for (int k=j;k<n;++j)
-			{
-				adder+=s[k];
-			}
-			if (compareString(builder(adder,occurences),stringT))
-			{
-				ans=max(ans,n-(j-i));
-			}
-			else
-			{
-				break;
-			}
-		}
-		cur+=s[i];
-	}
-	cout<<ans;
-	return 0;
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    string s, t;
+    cin >> s;
+    cin >> t;
+    int n = s.size(), m = t.size(), x = 0, ans = 0;
+    vector<int> v(m + 2, -1), w(m + 2, -1);
+    v[0] = 0;
+    for (int i = 0; i < n; ++i)
+        if (x < m && s[i] == t[x])
+            v[++x] = i + 1;
+    w[m + 1] = n + 1;
+    x = m - 1;
+    for (int i = n - 1; i >= 0; --i)
+        if (x >= 0 && s[i] == t[x])
+            w[--x + 2] = i + 1;
+    for (int i = 0; i <= m; ++i)
+        ans = max(ans, w[i + 1] - v[i] - 1);
+    if (v[m] == 0)
+        ans = -1;
+    cout << ans;
+    return 0;
 }
