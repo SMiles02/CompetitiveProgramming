@@ -48,27 +48,6 @@ struct Dijkstra {
         }
         return d;
     }
-    vector<T> multisource_shortest_path(vector<int> src) {
-        vector<T> d(n + 1, INF);
-        priority_queue<next_shortest> pq;
-        for (int i : src) {
-            d[i] = 0;
-            pq.push({i, 0});
-        }
-        while (!pq.empty()) {
-            int cur_node = pq.top().node;
-            T cur_dist = pq.top().dist;
-            pq.pop();
-            if (cur_dist > d[cur_node])
-                continue;
-            for (auto i : e[cur_node])
-                if (cur_dist + i.weight < d[i.target]) {
-                    d[i.target] = cur_dist + i.weight;
-                    pq.push({i.target, d[i.target]});
-                }
-        }
-        return d;
-    }
 };
 
 const int N = 801;

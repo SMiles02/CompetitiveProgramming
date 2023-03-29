@@ -55,7 +55,7 @@ int main() {
         for (int i = 1; i < n; ++i)
             for (int j = 0; j < m; ++j) {
                 int x = get_at_position(cur_hash, (i - 1) * m + j), y = get_at_position(cur_hash, i * m + j);
-                ll new_hash =  cur_hash + (y - x) * p[(i - 1) * m + j] + (x - y) * p[i * m + j];
+                ll new_hash =  cur_hash + p[(i - 1) * m + j] * (y - x) + p[i * m + j] * (x - y);
                 if (dp[new_hash] == 0 || cur_cost + rev_hash[x] + rev_hash[y] < dp[new_hash]) {
                     dp[new_hash] = cur_cost + rev_hash[x] + rev_hash[y];
                     pq.push({dp[new_hash], new_hash});
