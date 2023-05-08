@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// post-contest notes:
+// post-contest solution notes:
 // - store the cells occupied by black and white stones in a set
 // - for each stone of the colour that moves next, check all 8 5-stone 'lines' it's part of
 // specifically, check there are 4 stones of that colour there, and that the last position is unoccupied

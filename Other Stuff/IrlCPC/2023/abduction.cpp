@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// post-contest notes:
+// post-contest solution notes:
 // - don't fire the laser unless you have to
 // aka only fire it greedily at the current segment starting at your current position if there are still aliens to be abducted there
 // - account for firing the laser with the prefix sum +x -x trick

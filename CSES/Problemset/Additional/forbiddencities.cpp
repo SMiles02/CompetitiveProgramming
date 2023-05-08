@@ -1,117 +1,137 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-const int maxn = 2e5 + 7, lg = 21;
-int tin[maxn],tout[maxn],low[maxn],t,n,heights[4*maxn], up[lg][4*maxn];
-vector<int> edges[maxn],bctEdges[4*maxn];
-bitset<maxn> done;
-set<pair<int,int>> s;
-
-void dfs(int c, int p)
-{
-    done[c]=1;
-    tin[c] = low[c] = ++t;
-    for (int i : edges[c])
-        if (i!=p)
-        {
-            if (done[i])
-            {
-                low[c]=min(low[c],tin[i]);
-                continue;
-            }
-            dfs(i,c);
-            low[c]=min(low[c],low[i]);
-            if (tin[c]<=low[i])
-            {
-                s.insert({c,i});
-                s.insert({i,c});
-            }
-        }
-}
-
-void dfs2(int c, int k)
-{
-    bctEdges[k].push_back(c);
-    bctEdges[c].push_back(k);
-    done[c]=1;
-    for (int i : edges[c])
-        if (!done[i])
-        {
-            if (s.find({c,i})!=s.end())
-            {
-                bctEdges[t+1].push_back(c);
-                bctEdges[c].push_back(t+1);
-                dfs2(i,++t);
-            }
-            else
-                dfs2(i,k);
-        }
-}
-
-void bctDfs(int c, int p, int h)
-{
-    tin[c]=++t;
-    heights[c]=h;
-    up[0][c]=p;
-    for (int i=1;i<lg;++i)
-        up[i][c]=up[i-1][up[i-1][c]];
-    for (int i : bctEdges[c])
-        if (i!=p)
-            bctDfs(i,c,h+1);
-    tout[c]=++t;
-}
-
-bool isAncestor(int u, int v)
-{
-    if (tin[u]<=tin[v]&&tout[v]<=tout[u])
-        return 1;
-    return 0;
-}
-
-int lca(int u, int v)
-{
-    if (isAncestor(u,v))
-        return u;
-    if (isAncestor(v,u))
-        return v;
-    for (int i=lg-1;i+1;--i)
-        if (!isAncestor(up[i][u],v))
-            u=up[i][u];
-    return up[0][u];
-}
-
-int dist(int u, int v)
-{
-    return heights[u] + heights[v] - (2*heights[lca(u,v)]);
-}
-
-int main()
-{
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int m,q,u,v,a,b,c;
-    cin>>n>>m>>q;
-    for (int i=0;i<m;++i)
-    {
-        cin>>u>>v;
-        edges[u].push_back(v);
-        edges[v].push_back(u);
+struct block_cut_tree {
+    int n, edge_id, bct_node_cnt;
+    vector<vector<array<int, 2>>> edges;
+    vector<vector<int>> edges_bct;
+    vector<bool> is_split;
+    block_cut_tree(int n) : n(n), edges(n + 1), edges_bct(n * 3 + 1), edge_id(0) {}
+    void add_edge(int x, int y) {
+        edges[x].push_back({y, edge_id});
+        edges[y].push_back({x, edge_id});
+        ++edge_id;
+        is_split.push_back(false);
     }
-    dfs(1,0);
-    t=n+1;
-    done.reset();
-    dfs2(1,n+1);
-    t=0;
-    bctDfs(1,0,0);
-    tout[0]=++t;
-    while (q--)
-    {
-        cin>>a>>b>>c;
-        if (dist(a,b)==dist(a,c)+dist(b,c))
-            cout<<"NO\n";
+    void dfs_split(int c, int pid, int& timer, vector<int>& tin, vector<int>& low, vector<bool>& done) {
+        done[c] = true;
+        tin[c] = low[c] = ++timer;
+        for (auto i : edges[c])
+            if (i[1] != pid) {
+                if (done[i[0]])
+                    low[c] = min(low[c], tin[i[0]]);
+                else {
+                    dfs_split(i[0], i[1], timer, tin, low, done);
+                    low[c] = min(low[c], low[i[0]]);
+                    is_split[i[1]] = tin[c] <= low[i[0]];
+                }
+            }
+    }
+    void dfs_build_bct(int c, int g, int& timer, vector<bool>& done) {
+        done[c] = true;
+        edges_bct[c].push_back(g + n);
+        edges_bct[g + n].push_back(c);
+        for (auto i : edges[c])
+            if (!done[i[0]]) {
+                if (is_split[i[1]]) {
+                    ++timer;
+                    edges_bct[c].push_back(timer + n);
+                    edges_bct[timer + n].push_back(c);
+                    dfs_build_bct(i[0], timer, timer, done);
+                }
+                else
+                    dfs_build_bct(i[0], g, timer, done);
+            }
+    }
+    void build_bct() {
+        int timer = 0;
+        vector<int> tin(n + 1), low(n + 1);
+        vector<bool> done_dfs(n + 1), done_build(n + 1);
+        bct_node_cnt = 0;
+        for (int i = 1; i <= n; ++i)
+            if (!done_dfs[i]) {
+                dfs_split(i, -1, timer, tin, low, done_dfs);
+                ++bct_node_cnt;
+                dfs_build_bct(i, bct_node_cnt, bct_node_cnt, done_build);
+            }
+    }
+};
+
+struct tree {
+    int N, L, timer = 0;
+    vector<int> tin, tout, height;
+    vector<vector<int>> up, e;
+    tree(int n) : N(n), L((int)log2(n + 1) + 1), e(n + 1), tin(n + 1), tout(n + 1), height(n + 1), up((int)log2(n + 1) + 1, vector<int>(n + 1)) {}
+    void add_directed_edge(int x, int y) {
+        e[x].push_back(y);
+    }
+    void add_undirected_edge(int x, int y) {
+        e[x].push_back(y);
+        e[y].push_back(x);
+    }
+    void build_lca(int c, int p) {
+        up[0][c] = p;
+        height[c] = height[p] + 1;
+        for (int i = 1; i < L; ++i)
+            up[i][c] = up[i - 1][up[i - 1][c]];
+        tin[c] = ++timer;
+        for (int i : e[c])
+            if (i != p)
+                build_lca(i, c);
+        tout[c] = timer;
+    }
+    void build_queries(int root = 1) {
+        build_lca(root, 0);
+        tout[0] = ++timer;
+    }
+    bool is_ancestor(int x, int y)  {
+        return (tin[x] <= tin[y] && tout[y] <= tout[x]);
+    }
+    int query_kth_ancestor(int x, int k) {
+        for (int i = 0; i < L; ++i)
+            if (k & (1 << i))
+                x = up[i][x];
+        return x;
+    }
+    int lca(int x, int y) {
+        if (is_ancestor(x, y))
+            return x;
+        if (is_ancestor(y, x))
+            return y;
+        for (int i = L - 1; i >= 0; --i)
+            if (!is_ancestor(up[i][x], y))
+                x = up[i][x];
+        return up[0][x];
+    }
+    int query_distance(int x, int y) {
+        return height[x] + height[y] - height[lca(x, y)] * 2;
+    }
+};
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int n, m, q;
+    cin >> n >> m >> q;
+    block_cut_tree bct(n);
+    while (m--) {
+        int x, y;
+        cin >> x >> y;
+        bct.add_edge(x, y);
+    }
+    bct.build_bct();
+    tree solve(n + bct.bct_node_cnt);
+    for (int i = 1; i <= n + bct.bct_node_cnt; ++i)
+        for (int j : bct.edges_bct[i])
+            if (i < j)
+                solve.add_undirected_edge(i, j);
+    solve.build_queries();
+    while (q--) {
+        int x, y, z;
+        cin >> x >> y >> z;
+        if (solve.query_distance(x, y) == solve.query_distance(x, z) + solve.query_distance(y, z))
+            cout << "NO\n";
         else
-            cout<<"YES\n";
+            cout << "YES\n";
     }
     return 0;
 }

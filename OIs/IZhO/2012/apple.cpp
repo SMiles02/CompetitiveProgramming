@@ -1,93 +1,77 @@
+// lol i've solved this before but tried to re-do it with a template i made
+// but the math(s) ain't math(s)in
+
 #include <bits/stdc++.h>
 #define ll long long
+#define sz(x) (int)(x).size()
 using namespace std;
 
-struct implicit
-{
-    struct node
-    {
-        node *l,*r;
-        int val = 0;
-        bool allSet = 0;
+template<class S, S (*op)(S, S), S (*e)()> struct implicit_segtree {
+    // range [0, n]
+    struct node {
+        S val;
+        node *l, *r;
     };
     deque<node> buffer;
-    int n;
-    node *root;
-    node *newnode()
-    {
+    node *newnode() {
         buffer.emplace_back();
         return &buffer.back();
     }
-    implicit(int n) : n(n) {root=newnode();}
-    void passDown(node *&v)
-    {
-        if (!(v->l))
-            v->l=newnode();
-        if (!(v->r))
-            v->r=newnode();
-        if (v->allSet)
-        {
-            v->l->allSet=1;
-            v->r->allSet=1;
-        }
-    }
-    int calc(node *&v, int l, int r)
-    {
-        if (v->allSet)
-            return r-l+1;
-        return v->val;
-    }
-    void update(node *&v, int cL, int cR, int l, int r)
-    {
-        if (r<cL||cR<l)
+    int n;
+    node *root;
+    implicit_segtree(int n) : n(n) { root = newnode(); }
+    void update(node *&cur_node, int curl, int curr, int i, S x) {
+        if (i < curl || curr < i)
             return;
-        if (l<=cL&&cR<=r)
-        {
-            v->allSet=1;
+        if (!cur_node) 
+            cur_node = newnode();
+        if (curl == curr) {
+            cur_node.val = S;
             return;
         }
-        passDown(v);
-        update(v->l,cL,cL+(cR-cL)/2,l,r);
-        update(v->r,cL+(cR-cL)/2+1,cR,l,r);
-        v->val=calc(v->l,cL,cL+(cR-cL)/2)+calc(v->r,cL+(cR-cL)/2+1,cR);
+        update(cur_node->l, curl, curl + (curr - curl) / 2, i, x);
+        update(cur_node->r, curl + (curr - curl) / 2 + 1, curr, i, x);
     }
-    void update(int l, int r)
-    {
-        update(root,1,n,l,r);
+    void update(int i, S x) {
+        update(root, 0, n, i, x);
     }
-    int query(node *&v, int cL, int cR, int l, int r)
-    {
-        if (r<cL||cR<l)
-            return 0;
-        if (l<=cL&&cR<=r)
-            return calc(v,cL,cR);
-        passDown(v);
-        int rtn = query(v->l,cL,cL+(cR-cL)/2,l,r) + query(v->r,cL+(cR-cL)/2+1,cR,l,r);
-        v->val=calc(v->l,cL,cL+(cR-cL)/2)+calc(v->r,cL+(cR-cL)/2+1,cR);
-        return rtn;
+    S query(node* cur_node, int curl, int curr, int quel, int quer) {
+        if (quer < curl || curr < curl || !cur_node)
+            return e();
+        if (quel <= curl && curr <= quer)
+            return cur_node->val;
+        return merge(query(cur_node->l, curl, curl + (curr - curl) / 2, quel, quer), query(cur_node->r, curl + (curr - curl) / 2 + 1, curr, quel, quer));
     }
-    int query(int l, int r)
-    {
-        return query(root,1,n,l,r);
+    S query(int l, int r) {
+        return query(root, 0, n, l, r);
     }
 };
 
-int main()
-{
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,d,x,y,c=0;
-    cin>>n;
-    implicit seg(1e9);
-    while (n--)
-    {
-        cin>>d>>x>>y;
-        if (d==1)
-        {
-            c=seg.query(x+c,y+c);
-            cout<<c<<"\n";
-        }
-        else
-            seg.update(x+c,y+c);
+struct S {
+    bool all_set;
+    int len, sm;
+    S() {
+        all_set = false;
+        len = 0;
+        sm = 0;
     }
+};
+
+// basic operation
+S op(S &a, S &b) {
+    if (a.all_set) a.sm = a.len;
+    if (b.all_set) b.sm = b.len;
+    return {a.all_set && b.all_set, a.len + b.len, a.sm + b.sm};
+}
+
+// op(anything, e()) = anything
+S e() {
+    return {false, 0, 0};
+}
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int n;
+    cin >> n;
     return 0;
 }

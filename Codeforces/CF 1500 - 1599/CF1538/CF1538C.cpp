@@ -1,11 +1,10 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-struct implicit {
+template<class S, S (*op)(S, S), S (*e)()> struct implicit_segtree {
+    // range [0, n]
     struct node {
-        int val = 0;
+        S val = e();
         node *l, *r;
     };
     deque<node> buffer;
@@ -15,56 +14,69 @@ struct implicit {
     }
     int n;
     node *root;
-    implicit(int n) : n(n) {root = newnode();}
-    void update(node *&v, int l, int r, int i, int x) {
-        if (i<l||r<i)
+    implicit_segtree(int n) : n(n) { root = newnode(); }
+    void update(node *&cur_node, int curl, int curr, int i, S x) {
+        if (i < curl || curr < i)
             return;
-        if (!v) 
-            v=newnode();
-        v->val+=x;
-        if (l==r)
+        if (!cur_node) 
+            cur_node = newnode();
+        if (curl == curr) {
+            cur_node->val = x;
             return;
-        update(v->l,l,(l+r)>>1,i,x);
-        update(v->r,(l+r+2)>>1,r,i,x);
+        }
+        update(cur_node->l, curl, curl + (curr - curl) / 2, i, x);
+        update(cur_node->r, curl + (curr - curl) / 2 + 1, curr, i, x);
+        if (!cur_node->l)
+            cur_node->val = cur_node->r->val;
+        else if (!cur_node->r)
+            cur_node->val = cur_node->l->val;
+        else
+            cur_node->val = op(cur_node->l->val, cur_node->r->val);
     }
-    void update(int i, int x) {
-        update(root, 1, n, i, x);
+    void update(int i, S x) {
+        update(root, 0, n, i, x);
     }
-    int query(node* v, int cL, int cR, int l, int r) {
-        if (r<cL||cR<l||!v)
-            return 0;
-        if (l<=cL&&cR<=r)
-            return v->val;
-        return query(v->l,cL,(cL+cR)>>1,l,r) + query(v->r,(cL+cR+2)>>1,cR,l,r);
+    S query(node* cur_node, int curl, int curr, int quel, int quer) {
+        if (quer < curl || curr < curl || !cur_node)
+            return e();
+        if (quel <= curl && curr <= quer)
+            return cur_node->val;
+        return op(query(cur_node->l, curl, curl + (curr - curl) / 2, quel, quer), query(cur_node->r, curl + (curr - curl) / 2 + 1, curr, quel, quer));
     }
-    int query(int l, int r) {
-        return query(root,1,n,l,r);
+    S query(int l, int r) {
+        return query(root, 0, n, l, r);
     }
 };
 
-void solve()
-{
-    int n,l,r,x;
-    ll ans=0;
-    cin>>n>>l>>r;
-    implicit seg(1000000000);
-    while (n--)
-    {
-        cin>>x;
-        if (x>=r)
-            continue;
-        ans+=seg.query(max(1,l-x),r-x);
-        seg.update(x,1);
+using S = int;
+
+// basic operation
+S op(S a, S b) { return a + b; }
+
+// op(anything, e()) = anything
+S e() { return 0; }
+
+void solve() {
+    int n, l, r;
+    long long ans = 0;
+    cin >> n >> l >> r;
+    implicit_segtree<S, op, e> seg(1e9);
+    while (n--) {
+        int k;
+        cin >> k;
+        if (k < r) {
+            ans += seg.query(max(1, l - k), r - k);
+            seg.update(k, seg.query(k, k) + 1);
+        }
     }
-    cout<<ans<<"\n";
+    cout << ans << "\n";
 }
 
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    while (n--)
+    int t;
+    cin >> t;
+    while (t--)
         solve();
     return 0;
 }

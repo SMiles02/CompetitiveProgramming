@@ -1,5 +1,8 @@
 // partial sol, gets 12/20 testcases
+// note: added pragmas after contest, cut time down from ~3500ms to ~2400ms o_O
+// sadly not enough to get any more testcases though, maybe i should try to optimise this sometime?
 
+#pragma GCC optimize("Ofast,unroll-loops")
 #include <bits/stdc++.h>
 using namespace std;
 

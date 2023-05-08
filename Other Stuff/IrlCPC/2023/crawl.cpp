@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// post-contest notes:
+// post-contest solution notes:
 // - it's always optimal to take the cheapest pubs
 // so just sort and do it???
 

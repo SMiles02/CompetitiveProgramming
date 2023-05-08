@@ -1,57 +1,59 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int maxn = 1e5 + 7;
-int ans[maxn];
-vector<int> e1[maxn], e2[maxn];
-bitset<maxn> done;
-stack<int> s;
+struct strongly_connected_components {
+    int n, component_count;
+    vector<vector<int>> edges, reverse_edges;
+    vector<int> component, component_size;
+    strongly_connected_components(int n) : n(n), edges(n + 1), reverse_edges(n + 1), component(n + 1), component_size(n + 1), component_count(0) {}
+    void add_edge(int x, int y) {
+        edges[x].push_back(y);
+        reverse_edges[y].push_back(x);
+    }
+    void dfs(int c, vector<int>& out_order, vector<bool>& done) {
+        done[c] = true;
+        for (int i : edges[c])
+            if (!done[i])
+                dfs(i, out_order, done);
+        out_order.push_back(c);
+    }
+    void dfs_reverse(int c, vector<bool>& done) {
+        done[c] = true;
+        component[c] = component_count;
+        ++component_size[component_count];
+        for (int i : reverse_edges[c])
+            if (!done[i])
+                dfs_reverse(i, done);
+    }
+    void build_scc() {
+        vector<int> out_order;
+        vector<bool> done(n + 1, false), done_reverse(n + 1, false);
+        for (int i = 1; i <= n; ++i)
+            if (!done[i])
+                dfs(i, out_order, done);
+        component_count = 0;
+        for (int i = out_order.size() - 1; i >= 0; --i)
+            if (!done_reverse[out_order[i]]) {
+                ++component_count;
+                component_size[component_count] = 0;
+                dfs_reverse(out_order[i], done_reverse);
+            }
+    }
+};
 
-void dfs1(int c)
-{
-    done[c]=1;
-    for (int i : e1[c])
-        if (!done[i])
-            dfs1(i);
-    s.push(c);
-}
-
-void dfs2(int c, int k)
-{
-    done[c]=1;
-    ans[c]=k;
-    for (int i : e2[c])
-        if (!done[i])
-            dfs2(i,k);
-}
-
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,m,u,v,k=0;
-    cin>>n>>m;
-    while (m--)
-    {
-        cin>>u>>v;
-        e1[u].push_back(v);
-        e2[v].push_back(u);
+    int n, m;
+    cin >> n >> m;
+    strongly_connected_components scc(n);
+    while (m--) {
+        int x, y;
+        cin >> x >> y;
+        scc.add_edge(x, y);
     }
-    for (int i=1;i<=n;++i)
-        if (!done[i])
-            dfs1(i);
-    done.reset();
-    while (!s.empty())
-    {
-        if (done[s.top()])
-        {
-            s.pop();
-            continue;
-        }
-        dfs2(s.top(),++k);
-        s.pop();
-    }
-    cout<<k<<"\n";
-    for (int i=1;i<=n;++i)
-        cout<<ans[i]<<" ";
+    scc.build_scc();
+    cout << scc.component_count << "\n";
+    for (int i = 1; i <= n; ++i)
+        cout << scc.component[i] << " ";
     return 0;
 }
