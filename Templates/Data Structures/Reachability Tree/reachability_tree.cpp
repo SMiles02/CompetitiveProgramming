@@ -1,9 +1,9 @@
 struct reachability_tree {
-    int n, lg, t, timer = 0;
+    int n, lg, t, timer;
     vector<int> dsu, tin, tout, time_of_creation;
     vector<bool> done;
     vector<vector<int>> e, up;
-    reachability_tree(int n) : n(n), t(n + 1), lg((int)log2(n * 2 + 1) + 2), dsu(n * 2 + 1), tin(n * 2 + 1), tout(n * 2 + 1), done(n * 2 + 1), e(n * 2 + 1), up((int)log2(n * 2 + 1) + 2, vector<int>(n * 2 + 1)), time_of_creation(n * 2 + 1) {
+    reachability_tree(int n) : n(n), lg((int)log2(n * 2 + 1) + 2), t(n + 1), timer(0), dsu(n * 2 + 1), tin(n * 2 + 1), tout(n * 2 + 1), time_of_creation(n * 2 + 1), done(n * 2 + 1), e(n * 2 + 1), up((int)log2(n * 2 + 1) + 2, vector<int>(n * 2 + 1)) {
         for (int i = 0; i <= n; ++i) {
             dsu[i] = i;
             up[0][i] = i;

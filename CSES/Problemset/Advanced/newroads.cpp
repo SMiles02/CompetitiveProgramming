@@ -1,57 +1,60 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct reachability_tree {
-    int n, lg, t, timer = 0;
-    vector<int> dsu, tin, tout, time_of_creation;
-    vector<bool> done;
-    vector<vector<int>> e, up;
-    reachability_tree(int n) : n(n), t(n + 1), lg((int)log2(n * 2 + 1) + 2), dsu(n * 2 + 1), tin(n * 2 + 1), tout(n * 2 + 1), done(n * 2 + 1), e(n * 2 + 1), up((int)log2(n * 2 + 1) + 2, vector<int>(n * 2 + 1)), time_of_creation(n * 2 + 1) {
-        for (int i = 0; i <= n; ++i) {
-            dsu[i] = i;
-            up[0][i] = i;
-        }
+struct line_tree {
+    int N, L;
+    vector<int> head, tail, tin;
+    vector<vector<array<int, 2>>> sparse_table;
+    line_tree(int n) : N(n), L((int)log2(n) + 2), head(n + 1), tail(n + 1), tin(n + 1), sparse_table(L, vector<array<int, 2>>(n + 1)) {
+        iota(head.begin(), head.end(), 0);
+        iota(tail.begin(), tail.end(), 0);
+        for (int i = 1; i <= N; ++i)
+            sparse_table[0][i] = {i, 0};
     }
-    int find_set(int x) {
-        return x == dsu[x] ? x : dsu[x] = find_set(dsu[x]);
+    int find_head(int x) {
+        return x == head[x] ? x : head[x] = find_head(head[x]);
     }
-    void unite(int x, int y, int time_of_edge = 0) {
-        x = find_set(x);
-        y = find_set(y);
+    int find_tail(int x) {
+        return x == tail[x] ? x : tail[x] = find_tail(tail[x]);
+    }
+    void unite(int x, int y, int time_of_edge) {
+        x = find_head(x);
+        y = find_head(y);
         if (x != y) {
-            up[0][x] = up[0][y] = up[0][t] = dsu[x] = dsu[y] = dsu[t] = t;
-            time_of_creation[t] = time_of_edge;
-            e[t].push_back(x);
-            e[t].push_back(y);
-            t++;
+            int t = find_tail(x);
+            sparse_table[0][t] = {y, time_of_edge};
+            tail[t] = y;
+            head[y] = x;
         }
-    }
-    void dfs(int c) {
-        done[c] = true;
-        tin[c] = ++timer;
-        for (int i : e[c])
-            dfs(i);
-        tout[c] = ++timer;
     }
     void build_tree() {
-        for (int i = t - 1; i >= 0; --i) {
-            if (!done[i])
-                dfs(i);
-            for (int j = 1; j < lg; ++j)
-                up[j][i] = up[j - 1][up[j - 1][i]];
-        }
-    }
-    bool is_ancestor(int x, int y) {
-        return tin[x] <= tin[y] && tout[y] <= tout[x];
+        for (int j = 1; j < L; ++j)
+            for (int i = 1; i <= N; ++i)
+                sparse_table[j][i] = {sparse_table[j - 1][sparse_table[j - 1][i][0]][0], max(sparse_table[j - 1][i][1], sparse_table[j - 1][sparse_table[j - 1][i][0]][1])};
+        vector<bool> done(N + 1);
+        int timer = 0;
+        for (int i = 1; i <= N; ++i)
+            if (!done[i]) {
+                int cur = find_head(i);
+                while (!done[cur]) {
+                    tin[cur] = ++timer;
+                    done[cur] = true;
+                    cur = sparse_table[0][cur][0];
+                }
+            }
     }
     int time_of_connection(int x, int y) {
-        for (int i = lg - 1; i >= 0; --i)
-            if (!is_ancestor(up[i][x], y))
-                x = up[i][x];
-        if (is_ancestor(up[0][x], y))
-            return time_of_creation[up[0][x]];
-        else
+        if (find_head(x) != find_head(y))
             return -1;
+        if (tin[x] > tin[y])
+            swap(x, y);
+        int ans = 0;
+        for (int i = L - 1; i >= 0; --i)
+            if ((tin[y] - tin[x]) & (1 << i)) {
+                ans = max(ans, sparse_table[i][x][1]);
+                x = sparse_table[i][x][0];
+            }
+        return ans;
     }
 };
 
@@ -59,7 +62,7 @@ int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n, m, q;
     cin >> n >> m >> q;
-    reachability_tree tree(n);
+    line_tree tree(n);
     for (int i = 1; i <= m; ++i) {
         int x, y;
         cin >> x >> y;
