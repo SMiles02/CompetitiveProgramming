@@ -1,58 +1,40 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
-void solve()
-{
-    string s;
-    int n,k,ans=0,maxi;
-    cin>>n>>k;
-    cin>>s;
-    map<char,int> m;
-    for (int i=0;i<k/2;++i)
-    {
-        m.clear();
-        for (int j=i;j<n;j+=k)
-        {
-            ++m[s[j]];
+void solve() {
+    int n, k, ans = 0;
+    cin >> n >> k;
+    vector<int> cnt(k);
+    vector<vector<int>> f(k, vector<int>(26));
+    string s, t(k, 'a');
+    cin >> s;
+    for (int i = 0; i < n; ++i) {
+        if ((i % k) * 2 < k) {
+            ++f[i % k][s[i] - 'a'];
+            ++cnt[i % k];
         }
-        for (int j=k-1-i;j<n;j+=k)
-        {
-            ++m[s[j]];
+        else {
+            ++f[k - (i % k) - 1][s[i] - 'a'];
+            ++cnt[k - (i % k) - 1];
         }
-        maxi=0;
-        for (char c='a';c<='z';++c)
-        {
-            maxi=max(maxi,m[c]);
-        }
-        //cout<<"maxi = "<<maxi<<"\n";
-        ans+=(2*(n/k)-maxi);
     }
-    if (k%2)
-    {
-        m.clear();
-        for (int j=k/2;j<n;j+=k)
-        {
-            ++m[s[j]];
+    for (int i = 0; i * 2 < k; ++i) {
+        int id = 0;
+        for (int j = 1; j < 26; ++j) {
+            if (f[i][j] > f[i][id]) {
+                id = j;
+            }
         }
-        maxi=0;
-        for (char c='a';c<='z';++c)
-        {
-            maxi=max(maxi,m[c]);
-        }
-        ans+=((n/k)-maxi);
+        ans += cnt[i] - f[i][id];
     }
-    cout<<ans<<"\n";
+    cout << ans << "\n";
 }
 
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    while (n--)
-    {
+    int t;
+    cin >> t;
+    while (t--) {
         solve();
     }
     return 0;

@@ -1,55 +1,54 @@
 #include <bits/stdc++.h>
 #define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
-// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-// uniform_int_distribution<int>(1000,10000)(rng)
 
-string to_upper(string a) {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
+array<ll, 2> sub(array<ll, 2> a, array<ll, 2> b) {
+    ll d = (a[1] / __gcd(a[1], b[1])) * b[1];
+    array<ll, 2> tmp =  {a[0] * (d / a[1]) - b[0] * (d / b[1]), d};
+    ll g = __gcd(tmp[0], tmp[1]);
+    return {tmp[0] / g, tmp[1] / g};
 }
 
-string to_lower(string a) {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
-}
-
-void solve() {
-    string s, t;
-    cin >> s;
-    cin >> t;
-    vector<int> f(26);
-    for (auto i : s) {
-        ++f[i - 'a'];
-    }
-    if (t != "abc" || min({f[0], f[1], f[2]}) == 0) {
-        sort(s.begin(), s.end());
-        cout << s << "\n";
-        return;
-    }
-    while (f[0]--) {
-        cout << "a";
-    }
-    while (f[2]--) {
-        cout << "c";
-    }
-    while (f[1]--) {
-        cout << "b";
-    }
-    for (int i = 3; i < 26; ++i) {
-        while (f[i]--) {
-            cout << (char)('a' + i);
-        }
-    }
-    cout << "\n";
+bool less_than(array<ll, 2> a, array<ll, 2> b) {
+    // cerr << a[0] << " " << a[1] << " " << b[0] << " " << b[1] << "\n";
+    return a[0] * b[1] < a[1] * b[0];
 }
 
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int t;
-    cin >> t;
-    while (t--)
-        solve();
+    int n, x, y;
+    cin >> x >> y >> n;
+    array<ll, 2> ans = {0, 1};
+    array<ll, 2> diff = {x, y};
+    for (int i = 1; i <= n; ++i) {
+        ll l = 0, r = 1, m;
+        while (less_than({r, i}, {x, y})) {
+            l = r;
+            r *= 2;
+        }
+        while (l < r) {
+            m = l + (r - l) / 2 + 1;
+            if (less_than({m, i}, {x, y})) {
+                l = m;
+            }
+            else {
+                r = m - 1;
+            }
+        }
+        // cerr << l << " " << i << "\n";
+        // cerr << sub({x, y}, {l, i})[0] << " " << sub({x, y}, {l, i})[1] << " " << diff[0] << " " << diff[1] << " !\n";
+        // cerr << less_than(sub({x, y}, {l, i}), diff) << "\n";
+        if (less_than(sub({x, y}, {l, i}), diff)) {
+            // cerr << "moo\n";
+            ans = {l, i};
+            diff = sub({x, y}, {l, i});
+        }
+        if (less_than(sub({l + 1, i}, {x, y}), diff)) {
+            // cerr << "other moo\n";
+            ans = {l + 1, i};
+            diff = sub({l + 1, i}, {x, y});
+        }
+    }
+    cout << ans[0] << "/" << ans[1] << "\n";
     return 0;
 }

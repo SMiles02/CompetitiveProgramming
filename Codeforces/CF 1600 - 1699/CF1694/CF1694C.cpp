@@ -1,42 +1,29 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
 void solve() {
-    int n, x;
+    int n;
     cin >> n;
-    vector<int> a(n), b(n);
-    ll s = 0;
+    vector<long long> a(n), b(n);
     for (int i = 0; i < n; ++i) {
         cin >> a[i];
-        s += a[i];
     }
-    if (a == b) {
+    bool ok = a[0] >= 0, all_zero = false;
+    for (int i = 0; i + 1 < n; ++i) {
+        if (b[i] > a[i] || (all_zero && a[i] > b[i])) {
+            ok = false;
+            continue;
+        }
+        if (a[i] == b[i]) {
+            all_zero = true;
+        }
+        b[i + 1] -= a[i] - b[i];
+    }
+    if (ok && b[n - 1] == a[n - 1]) {
         cout << "YES\n";
-        return;
     }
-    if (a[0] <= 0 || s != 0 || n == 1) {
+    else {
         cout << "NO\n";
-        return;
-    }
-    b[0] = a[0];
-    b[1] = -a[0];
-    for (int i = 1; i < n; ++i) {
-        if (i == n - 1 || a[i] <= b[i]) {
-            if (a == b)
-                cout << "YES\n";
-            else
-                cout << "NO\n";
-            return;
-        }
-        x = a[i] - b[i];
-        if (x <= 0) {
-            while (1)
-                ++x;
-        }
-        b[i] += x;
-        b[i + 1] -= x;
     }
 }
 
@@ -44,7 +31,8 @@ int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int t;
     cin >> t;
-    while (t--)
+    while (t--) {
         solve();
+    }
     return 0;
 }
