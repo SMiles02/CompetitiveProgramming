@@ -1,8 +1,8 @@
 struct tree {
-    int N, L, timer = 0;
+    int n, l, timer = 0;
     vector<int> tin, tout, height;
     vector<vector<int>> up, e;
-    tree(int n) : N(n), L((int)log2(n + 1) + 1), e(n + 1), tin(n + 1), tout(n + 1), height(n + 1), up((int)log2(n + 1) + 1, vector<int>(n + 1)) {}
+    tree(int n) : n(n), l((int)log2(n + 1) + 1), e(n + 1), tin(n + 1), tout(n + 1), height(n + 1), up((int)log2(n + 1) + 1, vector<int>(n + 1)) {}
     void add_directed_edge(int x, int y) {
         e[x].push_back(y);
     }
@@ -13,12 +13,15 @@ struct tree {
     void build_lca(int c, int p) {
         up[0][c] = p;
         height[c] = height[p] + 1;
-        for (int i = 1; i < L; ++i)
+        for (int i = 1; i < l; ++i) {
             up[i][c] = up[i - 1][up[i - 1][c]];
+        }
         tin[c] = ++timer;
-        for (int i : e[c])
-            if (i != p)
+        for (int i : e[c]) {
+            if (i != p) {
                 build_lca(i, c);
+            }
+        }
         tout[c] = timer;
     }
     void build_queries(int root = 1) {
@@ -26,22 +29,28 @@ struct tree {
         tout[0] = ++timer;
     }
     bool is_ancestor(int x, int y)  {
-        return (tin[x] <= tin[y] && tout[y] <= tout[x]);
+        return tin[x] <= tin[y] && tout[y] <= tout[x];
     }
     int query_kth_ancestor(int x, int k) {
-        for (int i = 0; i < L; ++i)
-            if (k & (1 << i))
+        for (int i = 0; i < l; ++i) {
+            if (k & (1 << i)) {
                 x = up[i][x];
+            }
+        }
         return x;
     }
     int lca(int x, int y) {
-        if (is_ancestor(x, y))
+        if (is_ancestor(x, y)) {
             return x;
-        if (is_ancestor(y, x))
+        }
+        if (is_ancestor(y, x)) {
             return y;
-        for (int i = L - 1; i >= 0; --i)
-            if (!is_ancestor(up[i][x], y))
+        }
+        for (int i = l - 1; i >= 0; --i) {
+            if (!is_ancestor(up[i][x], y)) {
                 x = up[i][x];
+            }
+        }
         return up[0][x];
     }
     int query_distance(int x, int y) {

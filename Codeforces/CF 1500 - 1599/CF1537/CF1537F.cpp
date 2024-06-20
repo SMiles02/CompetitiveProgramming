@@ -1,115 +1,78 @@
 #include <bits/stdc++.h>
-#define ll long long
 using namespace std;
 
-const int N = 2e5+7;
-int n, m, fishy[N], surang[N];
-ll score[N];
-bitset<N> d, col;
-bool ok;
-vector<int> e[N], f[N];
-
-struct DSU
-{
-    vector<int> pt,rk;
-    DSU(int n) : pt(n+1), rk(n+1, 1)
-    {
-        for (int i = 1; i <= n; ++i)
-            pt[i] = i;
+struct disjoint_set_union {
+    vector<int> p, sz;
+    disjoint_set_union(int n) : p(n + 1), sz(n + 1, 1) {
+        iota(p.begin(), p.end(), 0);
     }
-
-    int find(int i)
-    {
-        return i == pt[i] ? i : pt[i] = find(pt[i]);
+    int find_set(int i) {
+        return i == p[i] ? i : p[i] = find_set(p[i]);
     }
-
-    void unite(int i, int j)
-    {
-        i = find(i);
-        j = find(j);
-        if (i^j)
-        {
-            if (rk[i] < rk[j])
+    void unite(int i, int j) {
+        i = find_set(i);
+        j = find_set(j);
+        if (i != j) {
+            if (sz[i] < sz[j])
                 swap(i, j);
-            pt[j] = i;
-            rk[i] += rk[j];
+            p[j] = i;
+            sz[i] += sz[j];
         }
+    }
+    bool connected(int x, int y) {
+        return find_set(x) == find_set(y);
     }
 };
 
-ll dfs(int c, int p)
-{
-    for (int i : e[c])
-        if (i!=p)
-            score[c]+=dfs(i,c);
-    return -score[c];
+void solve() {
+    int n, m, par = 0;
+    cin >> n >> m;
+    vector<int> v(n + 1), t(n + 1);
+    disjoint_set_union dsu(n * 2);
+    for (int i = 1; i <= n; ++i) {
+        cin >> v[i];
+        par += v[i] & 1;
+    }
+    for (int i = 1; i <= n; ++i) {
+        cin >> t[i];
+        par += t[i] & 1;
+    }
+    for (int i = 0, x, y; i < m; ++i) {
+        cin >> x >> y;
+        dsu.unite(x, y + n);
+        dsu.unite(x + n, y);
+    }
+    if (par & 1) {
+        cout << "NO\n";
+        return;
+    }
+    if (dsu.connected(1, n + 1)) {
+        cout << "YES\n";
+        return;
+    }
+    long long sum = 0;
+    for (int i = 1; i <= n; ++i) {
+        if (dsu.connected(i, 1)) {
+            sum += v[i] - t[i];
+        }
+        else {
+            sum -= v[i] - t[i];
+        }
+    }
+    if (sum == 0) {
+        cout << "YES\n";
+    }
+    else {
+        cout << "NO\n";
+    }
 }
 
-void dfs(int c)
-{
-    d[c]=1;
-    for (int i : f[c])
-    {
-        if (!d[i])
-        {
-            col[i]=col[c]^1;
-            dfs(i);
-        }
-        else if (col[i]==col[c])
-            ok=0;
-    }
-}
-
-void solve()
-{
-    cin>>n>>m;
-    int x,y,z=0;
-    DSU dsu(n);
-    for (int i=1;i<=n;++i)
-    {
-        e[i].clear();
-        f[i].clear();
-        d[i]=0;
-    }
-    for (int i=1;i<=n;++i)
-        cin>>fishy[i];
-    for (int i=1;i<=n;++i)
-        cin>>surang[i];
-    for (int i=1;i<=n;++i)
-    {
-        score[i]=surang[i]-fishy[i];
-        z+=score[i]&1;
-    }
-    while (m--)
-    {
-        cin>>x>>y;
-        if (dsu.find(x)!=dsu.find(y))
-        {
-            dsu.unite(x,y);
-            e[x].push_back(y);
-            e[y].push_back(x);
-        }
-        f[x].push_back(y);
-        f[y].push_back(x);
-    }
-    ok=1;
-    dfs(1);
-    if (z&1)
-        cout<<"NO\n";
-    else if (!ok)
-        cout<<"YES\n";
-    else if (dfs(1,0)!=0)
-        cout<<"NO\n";
-    else
-        cout<<"YES\n";
-}
-  
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int tc;
-    cin>>tc;
-    while (tc--)
+    int t;
+    cin >> t;
+    while (t--) {
         solve();
+    }
     return 0;
 }
