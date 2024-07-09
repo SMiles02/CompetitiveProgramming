@@ -1,48 +1,31 @@
-#include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
-using namespace std;
- 
-const int N = 3e5+7;
-int n,a[N],b[N],c[N];
-
-// b is the array that will be checked (will also be sorted after checking)
- 
-ll find_inversions(int l, int r)
-{
-    if (l==r)
+long long count_inversions(vector<int>& v, int l = -1, int r = -1) {
+    if (l == -1) {
+        l = 0;
+        r = (int)v.size() - 1;
+    }
+    if (l == r) {
         return 0;
-    int m=l+((r-l)>>1),x=l,y=m+1;
-    ll ans=find_inversions(l,m)+find_inversions(m+1,r);
-    for (int i=l;i<=r;++i)
-    {
-        if (x>m)
-            c[i]=b[y++];
-        else if (y>r)
-            c[i]=b[x++];
-        else if (b[x]>b[y])
-        {
-            c[i]=b[y++];
-            ans+=m-x+1;
+    }
+    vector<int> tmp(r - l + 1);
+    int x = l, y = l + (r - l) / 2 + 1;
+    long long inv = count_inversions(v, l, l + (r - l) / 2) + count_inversions(v, l + (r - l) / 2 + 1, r);
+    for (int &i : tmp) {
+        if (x == l + (r - l) / 2 + 1) {
+            i = v[y++];
         }
-        else
-            c[i]=b[x++];
+        else if (y == r + 1) {
+            i = v[x++];
+        }
+        else if (v[y] < v[x]) {
+            i = v[y++];
+            inv += l + (r - l) / 2 + 1 - x;
+        }
+        else {
+            i = v[x++];
+        }
     }
-    for (int i=l;i<=r;++i)
-        b[i]=c[i];
-    return ans;
-}
- 
-int main()
-{
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n;
-    cin>>n;
-    for (int i=0;i<n;++i)
-    {
-        cin>>a[i];
-        b[i]=a[i];
+    for (int i = l; i <= r; ++i) {
+        v[i] = tmp[i - l];
     }
-    //find_inversions(0,n-1);
-    return 0;
+    return inv;
 }

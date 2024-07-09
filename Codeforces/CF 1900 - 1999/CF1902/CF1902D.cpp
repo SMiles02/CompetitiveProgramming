@@ -19,7 +19,7 @@ array<int, 2> extend(array<int, 2> a, char c) {
 
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
-    int n, q, x, y;
+    int n, q;
     cin >> n >> q;
     string s;
     cin >> s;
@@ -29,14 +29,12 @@ int main() {
         v[i + 1] = extend(v[i], s[i]);
         a.insert({v[i + 1][0], v[i + 1][1], i + 1});
     }
-    x = 0;
-    y = 0;
     for (int i = n - 1; i >= 0; --i) {
         w[i + 1] = extend(w[i + 2], s[i]);
         b.insert({w[i + 1][0], w[i + 1][1], i + 1});
     }
     while (q--) {
-        int l, r;
+        int x, y, l, r;
         cin >> x >> y >> l >> r;
         bool ok = (x == 0 && y == 0) || (x == v[n][0] && y == v[n][1]);
         if (a.upper_bound({x, y, -1}) != a.end()) {
