@@ -1,23 +1,52 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
-// mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-// uniform_int_distribution<int>(1000,10000)(rng)
 
-string to_upper(string a) {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='a' && a[i]<='z') a[i]-='a'-'A';
-    return a;
-}
+const int N = 3e5 + 1, K = 21;
+const long long INF = 1e18;
+vector<int> e[N];
+long long a[N], dp[N][K];
 
-string to_lower(string a) {
-    for (int i=0;i<(int)a.size();++i) if (a[i]>='A' && a[i]<='Z') a[i]+='a'-'A';
-    return a;
+void dfs(int c, int p) {
+    for (int x : e[c]) {
+        if (x != p) {
+            dfs(x, c);
+        }
+    }
+    for (int i = 1; i < K; ++i) {
+        dp[c][i] = a[c] * i;
+        for (int x : e[c]) {
+            if (x == p) {
+                continue;
+            }
+            long long mini = INF;
+            for (int j = 1; j < K; ++j) {
+                if (i != j) {
+                    mini = min(mini, dp[x][j]);
+                }
+            }
+            dp[c][i] += mini;
+        }
+    }
 }
 
 void solve() {
     int n;
     cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        e[i].clear();
+        cin >> a[i];
+    }
+    for (int i = 1, x, y; i < n; ++i) {
+        cin >> x >> y;
+        e[x].push_back(y);
+        e[y].push_back(x);
+    }
+    dfs(1, 0);
+    long long ans = INF;
+    for (int i = 1; i < K; ++i) {
+        ans = min(ans, dp[1][i]);
+    }
+    cout << ans << "\n";
 }
 
 int main() {
