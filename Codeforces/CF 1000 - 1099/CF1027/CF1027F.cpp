@@ -27,31 +27,31 @@ struct disjoint_set_union {
     }
 };
 
-vector<array<int, 2>> compress(vector<int> v) {
-    int cnt = 0;
-    vector<array<int, 2>> m;
-    sort(v.begin(), v.end());
-    for (int i = 0; i < v.size(); ++i) {
-        if (i == 0 || v[i] != v[i - 1]) {
-            m.push_back({v[i], cnt++});
+struct coordinate_compression {
+    vector<array<int, 2>> compress;
+    coordinate_compression(vector<int> v) {
+        sort(v.begin(), v.end());
+        int cnt = 0;
+        for (auto i : v) {
+            if (compress.empty() || i != compress.back()[0]) {
+                compress.push_back({i, cnt++});
+            }
         }
     }
-    return m;
-}
-
-int get_compress(int x, vector<array<int, 2>>& v) {
-    int l = 0, r = v.size() - 1, m;
-    while (l < r) {
-        m = l + (r - l) / 2;
-        if (v[m][0] < x) {
-            l = m + 1;
+    int get_compress(int x) {
+        int l = 0, r = compress.size() - 1, m;
+        while (l < r) {
+            m = l + (r - l) / 2;
+            if (compress[m][0] < x) {
+                l = m + 1;
+            }
+            else {
+                r = m;
+            }
         }
-        else {
-            r = m;
-        }
+        return compress[l][1];
     }
-    return v[l][1];
-}
+};
 
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
@@ -64,11 +64,11 @@ int main() {
         v.push_back(a[i][0]);
         v.push_back(a[i][1]);
     }
-    vector<array<int, 2>> m = compress(v);
+    coordinate_compression compress(v);
     disjoint_set_union dsu(n * 2);
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < 2; ++j) {
-            a[i][j] = get_compress(a[i][j], m);
+            a[i][j] = compress.get_compress(a[i][j]);
         }
         dsu.unite(a[i][0], a[i][1]);
     }
@@ -92,6 +92,6 @@ int main() {
             ans = max(ans, alln[i][alln[i].size() - 2]);
         }
     }
-    cout << m[ans][0];
+    cout << compress.compress[ans][0];
     return 0;
 }
