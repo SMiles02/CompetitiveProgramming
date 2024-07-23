@@ -14,6 +14,11 @@ bool dfs(int c) {
     if (cnt == 0 && c == 1) {
         return true;
     }
+    for (auto [x, i] : e[c][1]) {
+        if (!done[i]) {
+            
+        }
+    }
 }
 
 void solve() {
