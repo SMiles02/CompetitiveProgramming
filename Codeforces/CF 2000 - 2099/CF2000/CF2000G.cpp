@@ -1,11 +1,9 @@
 #include <bits/stdc++.h>
-#define ll long long
-#define sz(x) (int)(x).size()
 using namespace std;
 
 struct dijkstra {
-    using S = int; // regular edge weight type, change if needed
-    using T = long long; // maximum possible distance type, change if needed
+    using S = int;
+    using T = long long;
     const T INF = 1e18;
     struct Edge {
         int target;
