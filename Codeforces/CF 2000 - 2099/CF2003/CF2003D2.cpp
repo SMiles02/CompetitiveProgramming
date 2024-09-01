@@ -192,7 +192,8 @@ void solve() {
         maxi = max(maxi, a[i][0]);
     }
     vector<int> ans(s + 10, maxi), furthest(s + 10, 1e9);
-
+    vector<bool> jump(s + 10);
+    
     for (int i = 0; i < s + 10; ++i) {
         ans[i] = max(ans[i], i);
     }

@@ -38,6 +38,7 @@ long long count_inversions(vector<int>& v, int l = -1, int r = -1) {
 void solve() {
     int n;
     cin >> n;
+    vector<int> a(n);
 }
 
 int main() {
