@@ -3,8 +3,9 @@ using namespace std;
 
 struct maxflow {
     int n;
-    vector<vector<long long>> e;
-    maxflow(int n) : n(n), e(n + 1, vector<long long>(n + 1)) { }
+    vector<int> p;
+    vector<vector<long long>> e, ne;
+    maxflow(int n) : n(n), p(n + 1), e(n + 1, vector<long long>(n + 1)) { }
     void add_edge(int a, int b, int c) {
         e[a][b] += c;
     }
@@ -31,7 +32,7 @@ struct maxflow {
             }
         }
         while (c > 0) {
-            vector<int> p(n + 1, -1);
+            fill(p.begin(), p.end(), -1);
             p[s] = s;
             if (!dfs(s, t, c, ne, p)) {
                 c /= 2;

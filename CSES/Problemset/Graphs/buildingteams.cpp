@@ -1,47 +1,45 @@
 #include <bits/stdc++.h>
 using namespace std;
- 
-const int H=1e5+1;
-vector<int> edges[H];
-int done[H];
- 
-int main()
-{
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n,m,u,v;
-    cin>>n>>m;
-    while (m--)
-    {
-        cin>>u>>v;
-        edges[u].push_back(v);
-        edges[v].push_back(u);
+
+const int N = 1e5 + 2;
+int ans[N];
+vector<int> e[N];
+
+void dfs(int c) {
+    for (int i : e[c]) {
+        if (ans[i] == 0) {
+            ans[i] = 3 - ans[c];
+            dfs(i);
+        }
     }
-    queue<int> q;
-    for (int i=1;i<=n;++i)
-    {
-        if (!done[i])
-        {
-            done[i]=1;
-            q.push(i);
-            while (!q.empty())
-            {
-                v=q.front();
-                q.pop();
-                for (int x : edges[v])
-                {
-                    if (!done[x])
-                    {
-                        done[x]=3-done[v];
-                        q.push(x);
-                    }
-                    else if (done[x]+done[v]!=3)
-                    {
-                        cout<<"IMPOSSIBLE";
-                        return 0;
-                    }
-                }
+}
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int n, m;
+    cin >> n >> m;
+    while (m--) {
+        int x, y;
+        cin >> x >> y;
+        e[x].push_back(y);
+        e[y].push_back(x);
+    }
+    for (int i = 1; i <= n; ++i) {
+        if (ans[i] == 0) {
+            ans[i] = 1;
+            dfs(i);
+        }
+    }
+    for (int i = 1; i <= n; ++i) {
+        for (int j : e[i]) {
+            if (ans[i] == ans[j]) {
+                cout << "IMPOSSIBLE\n";
+                return 0;
             }
         }
-        cout<<done[i]<<" ";
     }
-    
+    for (int i = 1; i <= n; ++i) {
+        cout << ans[i] << " ";
+    }
+    return 0;
+}
