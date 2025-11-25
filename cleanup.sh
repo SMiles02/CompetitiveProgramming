@@ -13,6 +13,7 @@ SCRIPT_NAME="$(basename "$SCRIPT_PATH")"
 find . -type f -name "*.txt" ! -path "$SCRIPT_PATH" -exec echo "Deleting {}" \; -delete
 
 # Delete all executable files except this script
+find . -type f -name "*.exe" ! -path "$SCRIPT_PATH" -exec echo "Deleting {}" \; -delete
 find . -type f -perm /111 ! -path "$SCRIPT_PATH" ! -name "$SCRIPT_NAME" -exec echo "Deleting {}" \; -delete
 
 echo "Cleanup complete."
