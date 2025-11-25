@@ -1,14 +1,18 @@
 #!/bin/bash
 # cleanup.sh
-# Deletes all .txt files and executables in the current directory and subdirectories.
+# Deletes all .txt files and executables in the current directory and subdirectories,
+# but never deletes this script itself.
 
 echo "Starting cleanup..."
 
-# Delete all .txt files
-find . -type f -name "*.txt" -print -delete
+# Get the absolute path of this script
+SCRIPT_PATH="$(realpath "$0")"
+SCRIPT_NAME="$(basename "$SCRIPT_PATH")"
 
-# Delete all executable files (excluding directories)
-# This checks for executable permission and excludes symbolic links
-find . -type f -perm /111 -print -delete
+# Delete all .txt files except this script
+find . -type f -name "*.txt" ! -path "$SCRIPT_PATH" -exec echo "Deleting {}" \; -delete
+
+# Delete all executable files except this script
+find . -type f -perm /111 ! -path "$SCRIPT_PATH" ! -name "$SCRIPT_NAME" -exec echo "Deleting {}" \; -delete
 
 echo "Cleanup complete."
