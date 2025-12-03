@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
- 
 struct dinic {
     const long long max_possible_flow = 1e18;
     struct edge {
@@ -65,17 +62,3 @@ struct dinic {
         return tot_flow;
     }
 };
- 
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n, m;
-    cin >> n >> m;
-    dinic g(n);
-    while (m--) {
-        int a, b, c;
-        cin >> a >> b >> c;
-        g.add_edge(a, b, c);
-    }
-    cout << g.find_max_flow(1, n) << "\n";
-    return 0;
-}
