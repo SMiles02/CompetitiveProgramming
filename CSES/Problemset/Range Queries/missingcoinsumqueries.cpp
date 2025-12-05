@@ -137,61 +137,57 @@ template <class S, S (*op)(S, S), S (*e)()> struct segment_tree {
     void update(int k) { d[k] = op(d[2 * k], d[2 * k + 1]); }
 };
 
-// basic operation
-int op(int a, int b) { return max(a, b); }
+const int P = 30;
+using S = array<long long, P>;
 
-// op(anything, e()) = anything
-int e() { return -1; }
+S op(S a, S b) {
+    S m;
+    for (int i = 0; i < P; ++i) {
+        m[i] = min(a[i], b[i]);
+    }
+    return m;
+}
 
-void set_val(map<int, set<int>>& s, segment_tree<int, op, e>& seg, int i, int k) {
-    if (s[k].find(i) == s[k].begin()) {
-        seg.set(i, e());
-    }
-    else {
-        seg.set(i, *(--s[k].find(i)));
-    }
+S nl;
+
+S e() {
+    return nl;
 }
 
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
+    for (int i = 0; i < P; ++i) {
+        nl[i] = (long long)2e9;
+    }
     int n, q;
     cin >> n >> q;
-    vector<int> a(n);
-    map<int, set<int>> s;
-    segment_tree<int, op, e> seg(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> a[i];
-        s[a[i]].insert(i);
-        set_val(s, seg, i, a[i]);
+    vector<vector<long long>> p(P, vector<long long>(n + 1));
+    segment_tree<S, op, e> seg(n);
+    for (int i = 0, x; i < n; ++i) {
+        cin >> x;
+        S cur = nl;
+        cur[__lg(x)] = x;
+        p[__lg(x)][i + 1] += x;
+        seg.set(i, cur);
+    }
+    for (int i = 0; i < P; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            p[i][j] += p[i][j - 1];
+        }
     }
     while (q--) {
-        int t, x, y;
-        cin >> t >> x >> y;
-        --x;
-        if (t == 1) {
-            int nv = -1;
-            if ((++s[a[x]].find(x)) != s[a[x]].end()) {
-                nv = *(++s[a[x]].find(x));
-            }
-            s[a[x]].erase(x);
-            a[x] = y;
-            s[y].insert(x);
-            set_val(s, seg, x, y);
-            if (nv != -1) {
-                set_val(s, seg, nv, a[nv]);
-            }
-            if (s[y].upper_bound(x) != s[y].end()) {
-                set_val(s, seg, *s[y].upper_bound(x), y);
+        int l, r;
+        long long sum = 0;
+        cin >> l >> r;
+        --l;
+        S cur = seg.prod(l, r);
+        for (int i = 0; i < P; ++i) {
+            long long qs = p[i][r] - p[i][l];
+            if ((qs == 0 && sum + 1 >= (1 << (i + 1))) || (qs != 0 && sum + 1 >= cur[i])) {
+                sum += qs;
             }
         }
-        else {
-            if (seg.prod(x, y) >= x) {
-                cout << "NO\n";
-            }
-            else {
-                cout << "YES\n";
-            }
-        }
+        cout << sum + 1 << "\n";
     }
     return 0;
 }

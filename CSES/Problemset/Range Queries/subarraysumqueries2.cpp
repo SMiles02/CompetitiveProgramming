@@ -137,61 +137,32 @@ template <class S, S (*op)(S, S), S (*e)()> struct segment_tree {
     void update(int k) { d[k] = op(d[2 * k], d[2 * k + 1]); }
 };
 
-// basic operation
-int op(int a, int b) { return max(a, b); }
+struct S {
+    long long sum, max_within, max_prefix, max_suffix;
+};
 
-// op(anything, e()) = anything
-int e() { return -1; }
-
-void set_val(map<int, set<int>>& s, segment_tree<int, op, e>& seg, int i, int k) {
-    if (s[k].find(i) == s[k].begin()) {
-        seg.set(i, e());
-    }
-    else {
-        seg.set(i, *(--s[k].find(i)));
-    }
+S op(S a, S b) {
+    return {a.sum + b.sum, 
+            max({a.max_within, b.max_within, a.max_suffix + b.max_prefix}),
+            max(a.max_prefix, a.sum + b.max_prefix),
+            max(b.max_suffix, a.max_suffix + b.sum)};
 }
+
+S e() { return {0, 0, 0, 0}; }
 
 int main() {
     ios_base::sync_with_stdio(0); cin.tie(0);
     int n, q;
     cin >> n >> q;
-    vector<int> a(n);
-    map<int, set<int>> s;
-    segment_tree<int, op, e> seg(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> a[i];
-        s[a[i]].insert(i);
-        set_val(s, seg, i, a[i]);
+    segment_tree<S, op, e> seg(n);
+    for (int i = 0, k; i < n; ++i) {
+        cin >> k;
+        seg.set(i, {k, max(k, 0), max(k, 0), max(k, 0)});
     }
     while (q--) {
-        int t, x, y;
-        cin >> t >> x >> y;
-        --x;
-        if (t == 1) {
-            int nv = -1;
-            if ((++s[a[x]].find(x)) != s[a[x]].end()) {
-                nv = *(++s[a[x]].find(x));
-            }
-            s[a[x]].erase(x);
-            a[x] = y;
-            s[y].insert(x);
-            set_val(s, seg, x, y);
-            if (nv != -1) {
-                set_val(s, seg, nv, a[nv]);
-            }
-            if (s[y].upper_bound(x) != s[y].end()) {
-                set_val(s, seg, *s[y].upper_bound(x), y);
-            }
-        }
-        else {
-            if (seg.prod(x, y) >= x) {
-                cout << "NO\n";
-            }
-            else {
-                cout << "YES\n";
-            }
-        }
+        int l, r;
+        cin >> l >> r;
+        cout << seg.prod(l - 1, r).max_within << "\n";
     }
     return 0;
 }
