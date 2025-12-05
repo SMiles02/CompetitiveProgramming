@@ -6,7 +6,7 @@ using namespace std;
 void solve() {
     int n, a, b;
     cin >> n >> a >> b;
-    if (a + b > n || a + b == 1 || max(a, b) == n) {
+    if (a + b > n || ((a > 0) ^ (b > 0))) {
         cout << "NO\n";
         return;
     }
@@ -15,26 +15,18 @@ void solve() {
     for (int i = 0; i < n - a - b; ++i) {
         x[i] = y[i] = i + 1;
     }
-    int al = n - a - b + 1, ar = n, bl = n - a - b + 1, br = n;
-    for (int i = 0; i < a + b; ++i) {
-        if (i < a) {
-            x[n - a - b + i] = ar--;
-            y[n - a - b + i] = bl++;
-        }
-        else {
-            x[n - a - b + i] = al++;
-            y[n - a - b + i] = br--;
-        }
+    deque<int> p, q;
+    for (int i = n - a - b; i < n; ++i) {
+        p.push_back(i + 1);
+        q.push_back(i + 1);
+    }
+    for (int i = 0; i < a; ++i) {
+        p.push_front(p.back());
+        p.pop_back();
     }
     for (int i = 0; i < a + b; ++i) {
-        if (x[n - a - b + i] == y[n - a - b + i]) {
-            if (a > b) {
-                swap(x[n - a - b + i], x[n - a - b + i + 1]);
-            }
-            else {
-                swap(y[n - a - b + i], y[n - a - b + i - 1]);
-            }
-        }
+        x[n - a - b + i] = p[i];
+        y[n - a - b + i] = q[i];
     }
     for (int i : x) {
         cout << i << " ";
