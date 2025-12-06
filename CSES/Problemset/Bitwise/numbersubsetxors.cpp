@@ -1,3 +1,6 @@
+#include <bits/stdc++.h>
+using namespace std;
+
 struct xor_basis {
     int sz;
     vector<int> basis;
@@ -18,3 +21,16 @@ struct xor_basis {
         return mask == 0;
     }
 };
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int n;
+    cin >> n;
+    xor_basis basis;
+    for (int i = 0, k; i < n; ++i) {
+        cin >> k;
+        basis.add_vector(k);
+    }
+    cout << (1 << basis.sz);
+    return 0;
+}
