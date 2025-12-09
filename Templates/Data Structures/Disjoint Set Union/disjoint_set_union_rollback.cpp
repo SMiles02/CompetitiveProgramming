@@ -24,7 +24,7 @@ struct disjoint_set_union_rollback {
     void roll_back() {
         int i = changes.back()[0], j = changes.back()[1];
         changes.pop_back();
-        pt[j] = j;
+        p[j] = j;
         sz[i] -= sz[j];
     }
 };

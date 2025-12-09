@@ -10,8 +10,9 @@ struct disjoint_set_union {
         i = find_set(i);
         j = find_set(j);
         if (i != j) {
-            if (sz[i] < sz[j])
+            if (sz[i] < sz[j]) {
                 swap(i, j);
+            }
             p[j] = i;
             sz[i] += sz[j];
         }

@@ -1,97 +1,123 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct disjoint_set_union {
-    vector<int> p, sz, e;
-    disjoint_set_union(int n) : p(n + 1), sz(n + 1, 1), e(n + 1) {
-        iota(p.begin(), p.end(), 0);
-    }
-    int find_set(int i) {
-        return i == p[i] ? i : p[i] = find_set(p[i]);
-    }
-    void unite(int i, int j) {
-        i = find_set(i);
-        j = find_set(j);
-        ++e[i];
-        if (i != j) {
-            if (sz[i] < sz[j]) {
-                swap(i, j);
-            }
-            p[j] = i;
-            sz[i] += sz[j];
-            e[i] += e[j];
-        }
-    }
-    bool connected(int x, int y) {
-        return find_set(x) == find_set(y);
-    }
-};
+const int N = 8;
+vector<char> pieces = {'p', 'n', 'b', 'r', 'q', 'k'};
+int n, m;
+int g[N][N];
+vector<pair<int,int>> positions;
 
-vector<array<int, 2>> compress(vector<int> v) {
-    int cnt = 0;
-    vector<array<int, 2>> m;
-    sort(v.begin(), v.end());
-    for (int i = 0; i < v.size(); ++i) {
-        if (i == 0 || v[i] != v[i - 1]) {
-            m.push_back({v[i], cnt++});
-        }
-    }
-    return m;
+bool ok(int x, int y) {
+    return 0 <= x && x < n && 0 <= y && y < m;
 }
 
-int get_compress(int x, vector<array<int, 2>>& v) {
-    int l = 0, r = v.size() - 1, m;
-    while (l < r) {
-        m = l + (r - l) / 2;
-        if (v[m][0] < x) {
-            l = m + 1;
+// Directions for rook, bishop, king, knight
+int dxR[] = {-1, 1, 0, 0};
+int dyR[] = {0, 0, -1, 1};
+int dxB[] = {-1, -1, 1, 1};
+int dyB[] = {-1, 1, -1, 1};
+int dxK[] = {-1,-1,-1,0,0,1,1,1};
+int dyK[] = {-1,0,1,-1,1,-1,0,1};
+int dxN[] = {-2,-2,-1,-1,1,1,2,2};
+int dyN[] = {-1,1,-2,2,-2,2,-1,1};
+
+int count_attacks(vector<vector<char>>& board, int x, int y) {
+    char c = board[x][y];
+    bool white = isupper(c);
+    c = tolower(c);
+    int cnt = 0;
+
+    auto attack = [&](int nx, int ny) {
+        if (!ok(nx, ny)) return;
+        if (board[nx][ny] == '.') cnt++;
+        else if ((isupper(board[nx][ny]) && !white) || (islower(board[nx][ny]) && white)) cnt++;
+    };
+
+    if (c == 'p') {
+        int dir = white ? -1 : 1;
+        for (int dy : {-1, 1}) {
+            int nx = x + dir, ny = y + dy;
+            if (ok(nx, ny)) attack(nx, ny);
         }
-        else {
-            r = m;
+    } else if (c == 'n') {
+        for (int i = 0; i < 8; i++) {
+            int nx = x + dxN[i], ny = y + dyN[i];
+            if (ok(nx, ny)) attack(nx, ny);
+        }
+    } else if (c == 'k') {
+        for (int i = 0; i < 8; i++) {
+            int nx = x + dxK[i], ny = y + dyK[i];
+            if (ok(nx, ny)) attack(nx, ny);
+        }
+    } else if (c == 'r' || c == 'q') {
+        for (int d = 0; d < 4; d++) {
+            for (int step = 1; ; step++) {
+                int nx = x + dxR[d]*step, ny = y + dyR[d]*step;
+                if (!ok(nx, ny)) break;
+                if (board[nx][ny] != '.') {
+                    attack(nx, ny);
+                    break;
+                }
+                cnt++;
+            }
         }
     }
-    return v[l][1];
+    if (c == 'b' || c == 'q') {
+        for (int d = 0; d < 4; d++) {
+            for (int step = 1; ; step++) {
+                int nx = x + dxB[d]*step, ny = y + dyB[d]*step;
+                if (!ok(nx, ny)) break;
+                if (board[nx][ny] != '.') {
+                    attack(nx, ny);
+                    break;
+                }
+                cnt++;
+            }
+        }
+    }
+
+    return cnt;
+}
+
+bool backtrack(int i, vector<vector<char>>& board) {
+    if (i == (int)positions.size()) {
+        for (int k = 0; k < (int)positions.size(); k++) {
+            auto [x, y] = positions[k];
+            int want = g[x][y];
+            int got = count_attacks(board, x, y);
+            if (got != want) return false;
+        }
+        cout << "Solution:\n";
+        for (int a = 0; a < n; a++) {
+            for (int b = 0; b < m; b++) cout << board[a][b] << " ";
+            cout << "\n";
+        }
+        return true;
+    }
+
+    auto [x, y] = positions[i];
+    for (char p : pieces) {
+        for (char c : {p, (char)toupper(p)}) {
+            board[x][y] = c;
+            if (backtrack(i + 1, board)) return true;
+            board[x][y] = '.';
+        }
+    }
+    return false;
 }
 
 int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n, ans = 0;
-    cin >> n;
-    vector<int> v;
-    vector<array<int, 2>> a(n);
-    for (int i = 0; i < n; ++i) {
-        cin >> a[i][0] >> a[i][1];
-        v.push_back(a[i][0]);
-        v.push_back(a[i][1]);
-    }
-    vector<array<int, 2>> m = compress(v);
-    disjoint_set_union dsu(n * 2);
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < 2; ++j) {
-            a[i][j] = get_compress(a[i][j], m);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    cin >> n >> m;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++) {
+            cin >> g[i][j];
+            if (g[i][j] != -1)
+                positions.push_back({i, j});
         }
-        dsu.unite(a[i][0], a[i][1]);
-    }
-    vector<vector<int>> alln(n * 2);
-    for (int i = 0; i < n * 2; ++i) {
-        alln[dsu.find_set(i)].push_back(i);
-    }
-    for (int i = 0; i < n * 2; ++i) {
-        if (alln[i].empty()) {
-            continue;
-        }
-        if (dsu.e[i] > dsu.sz[i]) {
-            cout << "-1\n";
-            return 0;
-        }
-        sort(alln[i].begin(), alln[i].end());
-        if (dsu.e[i] == dsu.sz[i]) {
-            ans = max(ans, alln[i].back());
-        }
-        else if (dsu.sz[i] > 1) {
-            ans = max(ans, alln[i][alln[i].size() - 2]);
-        }
-    }
-    cout << m[ans][0];
-    return 0;
+
+    vector<vector<char>> board(n, vector<char>(m, '.'));
+    backtrack(0, board);
 }

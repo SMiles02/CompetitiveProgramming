@@ -10,12 +10,15 @@ int main() {
     for (int i = 0; i < n; ++i) {
         cin >> a[i];
         double cur = 0;
-        for (int j = 1; j <= a[i]; ++j)
-            for (int k = 0; k < i; ++k)
-                if (a[k] > j)
+        for (int j = 1; j <= a[i]; ++j) {
+            for (int k = 0; k < i; ++k) {
+                if (a[k] > j) {
                     cur += double(a[k] - j) / a[k];
+                }
+            }
+        }
         ans += cur / a[i];
     }
-    cout << fixed << setprecision(6) << ans;
+    printf("%.6f", ans);
     return 0;
 }
