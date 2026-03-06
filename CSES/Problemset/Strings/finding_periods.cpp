@@ -1,3 +1,8 @@
+#include <bits/stdc++.h>
+#define ll long long
+#define sz(x) (int)(x).size()
+using namespace std;
+
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 const int MOD = 1e9 + 7;
@@ -65,3 +70,28 @@ struct string_hash {
         return true;
     }
 };
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    string s;
+    cin >> s;
+    int n = s.size();
+    string_hash hash(2, n);
+    hash.add_string(s);
+    for (int i = 1; i <= n; ++i) {
+        bool ok = true;
+        int cur = i;
+        while (cur != n && ok) {
+            if (cur * 2 <= i) {
+                ok &= hash.is_equal(1, 1, cur, 1, cur + 1, cur * 2);
+                cur *= 2;
+            }
+            else {
+                ok &= hash.is_equal(1, 1, n - cur, 1, cur + 1, n);
+                cur = n;
+            }
+        }
+        if (ok) cout << i << " ";
+    }
+    return 0;
+}

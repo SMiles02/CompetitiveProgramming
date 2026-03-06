@@ -1,3 +1,8 @@
+#include <bits/stdc++.h>
+#define ll long long
+#define sz(x) (int)(x).size()
+using namespace std;
+
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 const int MOD = 1e9 + 7;
@@ -65,3 +70,47 @@ struct string_hash {
         return true;
     }
 };
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    string s, t;
+    cin >> s;
+    int n = s.size();
+    string_hash hash(2, n);
+    hash.add_string(s);
+    t = s;
+    reverse(t.begin(), t.end());
+    hash.add_string(t);
+    array<int, 3> ans = {0, 1, 1};
+    for (int i = 1; i + 1 <= n; ++i) {
+        if (s[i - 1] != s[i]) continue;
+        int l = 1, r = min(i, n - i), m;
+        while (l < r) {
+            m = l + (r - l) / 2 + 1;
+            if (hash.is_equal(1, i - m + 1, i + m, 2, n + 1 - (i + m), n + 1 - (i - m + 1))) {
+                l = m;
+            }
+            else {
+                r = m - 1;
+            }
+        }
+        ans = max(ans, {l * 2, i - l + 1, i + l});
+    }
+    for (int i = 1; i <= n; ++i) {
+        int l = 0, r = min(i - 1, n - i), m;
+        while (l < r) {
+            m = l + (r - l) / 2 + 1;
+            if (hash.is_equal(1, i - m, i + m, 2, n + 1 - (i + m), n + 1 - (i - m))) {
+                l = m;
+            }
+            else {
+                r = m - 1;
+            }
+        }
+        ans = max(ans, {l * 2 + 1, i - l, i + l});
+    }
+    for (int i = ans[1] - 1; i <= ans[2] - 1; ++i) {
+        cout << s[i];
+    }
+    return 0;
+}
